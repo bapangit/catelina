@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import styles from "./Page.module.css";
+import Providers from "./providers";
+import { LuShoppingCart } from "react-icons/lu";
+
+import SearchComp from "../components/SearchComponent";
+import ProfileComp from "../components/ProfileComponent";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,7 +34,39 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>
+          <main className={styles.main}>
+            <header className={styles.header}>
+              <SearchComp styles={styles} />
+              <p className={styles.p}>Ecom App</p>
+              <nav className={styles.nav}>
+                <ol className={styles.ol}>
+                  <li className={styles.icon_style}>Products</li>
+                  <li>Categories</li>
+                  <li>Most Rated</li>
+                </ol>
+              </nav>
+              <div className={styles.header_secondary_nav}>
+                <ul>
+                  <li>
+                    <span>
+                      <LuShoppingCart className="icon" />
+                    </span>
+                  </li>
+                  <li>
+                    <ProfileComp styles={styles} />
+                  </li>
+                </ul>
+              </div>
+            </header>
+            {children}
+            <footer>
+              <div></div>
+            </footer>
+          </main>
+        </Providers>
+      </body>
     </html>
   );
 }
