@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/DBConnect";
-import Product from "@/models/Product";
+import Product from "@/config/models/product";
 
 export async function POST() {
   try {
@@ -8,9 +8,9 @@ export async function POST() {
 
     const product = await Product.create({
       title: "product title",
-      price: 0,
+      price:100,
       image: "image_url",
-      published: false,
+      published: true,
     });
 
     return NextResponse.json({

@@ -89,6 +89,31 @@ const AddProduct = () => {
     }
   };
 
+  const saveProduct = async () => {
+  try {
+    const response = await fetch(`/api/products/create-product/${productId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        price,
+        image: preview,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Product Saved");
+      console.log(data.product);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   return (
     <>
       <h2>Add New Product</h2>
@@ -146,7 +171,7 @@ const AddProduct = () => {
         </div>
       )}
 
-      <button type="submit" className={styles.button}>
+      <button onClick={saveProduct}  className={styles.button}>
         Add Product
       </button>
     </>

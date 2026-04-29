@@ -6,7 +6,8 @@ const productSchema = new Schema(
     title: String,
     price:String,
     image:String,
-    isdraft:Boolean
+    published:{type:Boolean,default:false},
+
   },
 );
 
