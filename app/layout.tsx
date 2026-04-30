@@ -46,7 +46,9 @@ export default function RootLayout({
              <Link href="/"> <p className={styles.p}>Ecom App</p></Link>
               <nav className={styles.nav}>
                 <ol className={styles.ol}>
-                  <li className={styles.icon_style}>Products</li>
+                  <li className={styles.icon_style}>
+                    <Link href="/products">Products</Link>
+                  </li>
                   <li>Categories</li>
                   <li>Most Rated</li>
                 </ol>

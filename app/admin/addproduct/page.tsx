@@ -108,7 +108,7 @@ const AddProduct = () => {
       body: JSON.stringify({
         title,
         price,
-        image: preview,
+        image: imageUrl,
         published:true
       }),
     });
