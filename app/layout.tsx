@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import styles from "./Page.module.css";
+import styles from "./page.module.css";
 import Providers from "./providers";
 import { LuShoppingCart } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
