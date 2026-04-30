@@ -13,15 +13,20 @@ const AddProduct = () => {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    const createDraftProduct = async () => {
+    
+    /* CREATE DRAFT */
+  const createDraftProduct = async () => {
       try {
+        console.log("-------------1");
+        
         const res = await fetch("/api/products/create-draft", {
           method: "POST",
         });
-
+        console.log("-------------2",res);
         const data = await res.json();
         
-
+        console.log("data--------------------------",data);
+        
         if (data.success) {
           setProductId(data.product._id);
         }
@@ -30,11 +35,14 @@ const AddProduct = () => {
       }
     };
 
+
     if (!productId) {
       createDraftProduct();
     }
   }, [productId]);
 
+
+    /* HANDLE IMAGE CHANGE | SAVE TO DRAFT */
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>
   ) => {
@@ -65,12 +73,12 @@ const AddProduct = () => {
       );
 
       const data = await res.json();
-
+      console.log("upload data",data)
       if (data.secure_url) {
         setImageUrl(data.secure_url);
 
         // optional save to db instantly
-        await fetch(`/api/products/${productId}`, {
+        await fetch(`/api/products/create-product/${productId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -78,6 +86,8 @@ const AddProduct = () => {
           body: JSON.stringify({
             image: data.secure_url,
           }),
+        }).then(()=>{"image url saved"}).catch((e)=>{
+          console.log("e",e)
         });
       }
     } catch (error) {
@@ -87,6 +97,7 @@ const AddProduct = () => {
     }
   };
 
+  /* SAVE PRODUCT */
   const saveProduct = async () => {
   try {
     const response = await fetch(`/api/products/create-product/${productId}`, {
@@ -98,6 +109,7 @@ const AddProduct = () => {
         title,
         price,
         image: preview,
+        published:true
       }),
     });
 

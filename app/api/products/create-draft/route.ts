@@ -8,9 +8,9 @@ export async function POST() {
 
     const product = await Product.create({
       title: "product title",
-      price:100,
+      price:"100",
       image: "image_url",
-      published: true,
+      published: false,
     });
 
     return NextResponse.json({

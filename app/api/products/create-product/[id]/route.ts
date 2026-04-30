@@ -19,7 +19,7 @@ export async function PUT(
         title: body.title,
         price: body.price,
         image: body.image,
-        published: true,
+        published: body.published,
       },
       { new: true }
     );
