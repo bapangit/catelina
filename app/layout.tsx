@@ -5,9 +5,11 @@ import "./globals.css";
 import styles from "./Page.module.css";
 import Providers from "./providers";
 import { LuShoppingCart } from "react-icons/lu";
+import { IoMdAdd } from "react-icons/io";
 
 import SearchComp from "../components/SearchComponent";
 import ProfileComp from "../components/ProfileComponent";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +41,7 @@ export default function RootLayout({
           <main className={styles.main}>
             <header className={styles.header}>
               <SearchComp styles={styles} />
-              <p className={styles.p}>Ecom App</p>
+             <Link href="/"> <p className={styles.p}>Ecom App</p></Link>
               <nav className={styles.nav}>
                 <ol className={styles.ol}>
                   <li className={styles.icon_style}>Products</li>
@@ -49,6 +51,11 @@ export default function RootLayout({
               </nav>
               <div className={styles.header_secondary_nav}>
                 <ul>
+                   <li>
+                    <span>
+                      <Link href="admin/addproduct"><IoMdAdd className="icon" /></Link>
+                    </span>
+                  </li>
                   <li>
                     <span>
                       <LuShoppingCart className="icon" />
