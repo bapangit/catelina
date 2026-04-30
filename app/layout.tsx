@@ -6,6 +6,8 @@ import styles from "./Page.module.css";
 import Providers from "./providers";
 import { LuShoppingCart } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
+import { RiDraftLine } from "react-icons/ri";
+
 
 import SearchComp from "../components/SearchComponent";
 import ProfileComp from "../components/ProfileComponent";
@@ -51,10 +53,15 @@ export default function RootLayout({
               </nav>
               <div className={styles.header_secondary_nav}>
                 <ul>
-                   <li>
-                    <span>
-                      <Link href="admin/addproduct"><IoMdAdd className="icon" /></Link>
-                    </span>
+                  <li>
+                    <Link href="/admin/addproduct" className={styles.addButton}>
+                      <IoMdAdd className="icon" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/admin/drafts" className={styles.draftButton}>
+                      <RiDraftLine className="icon" />
+                    </Link>
                   </li>
                   <li>
                     <span>
