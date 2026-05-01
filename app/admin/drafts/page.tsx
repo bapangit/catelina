@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface Product {
   _id: string;
   title: string;
   price: string;
-  image: string;
+  image1?: string;
+  image2?: string;
 }
 
 const Drafts = () => {
@@ -52,17 +54,22 @@ const Drafts = () => {
           }}
         >
           {products.map((product) => (
-            <div
+            <Link
               key={product._id}
+              href={`/admin/addproduct?id=${product._id}`}
               style={{
+                display: "block",
                 border: "1px solid #ddd",
                 borderRadius: "10px",
                 padding: "15px",
+                color: "inherit",
+                textDecoration: "none",
+                cursor: "pointer",
               }}
             >
-              {product.image && product.image.startsWith("http") ? (
+              {(product.image1 || product.image2)?.startsWith("http") ? (
                 <img
-                  src={product.image}
+                  src={product.image1 || product.image2 || ""}
                   alt={product.title}
                   style={{
                     width: "100%",
@@ -99,7 +106,7 @@ const Drafts = () => {
               >
                 Draft
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

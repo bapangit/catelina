@@ -1,35 +1,55 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect } from "react";
+import { use, useState, ChangeEvent, useEffect } from "react";
 import styles from "./page.module.css";
 
-const AddProduct = () => {
+type AddProductPageProps = {
+  searchParams: Promise<{ id?: string | string[] }>;
+};
+
+const AddProduct = ({ searchParams }: AddProductPageProps) => {
+  const resolvedSearchParams = use(searchParams);
+  const draftId =
+    typeof resolvedSearchParams.id === "string"
+      ? resolvedSearchParams.id
+      : Array.isArray(resolvedSearchParams.id)
+        ? resolvedSearchParams.id[0]
+        : undefined;
+
   const [productId, setProductId] = useState("");
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const [image2, setImage2] = useState<File | null>(null);
   const [preview2, setPreview2] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
   const [uploading2, setUploading2] = useState(false);
 
   useEffect(() => {
-    /* CREATE DRAFT */
-    const createDraftProduct = async () => {
+    const initializeProduct = async () => {
       try {
-        console.log("-------------1");
+        if (draftId) {
+          const res = await fetch(`/api/products/create-product/${draftId}`);
+          const data = await res.json();
+
+          if (data.success && data.product) {
+            setProductId(data.product._id || draftId);
+            setTitle(data.product.title || "");
+            setPrice(data.product.price || "");
+            setImageUrl(data.product.image1 || "");
+            setPreview(data.product.image1 || "");
+            setImageUrl2(data.product.image2 || "");
+            setPreview2(data.product.image2 || "");
+            return;
+          }
+        }
 
         const res = await fetch("/api/products/create-draft", {
           method: "POST",
         });
-        console.log("-------------2", res);
         const data = await res.json();
-
-        console.log("data--------------------------", data);
 
         if (data.success) {
           setProductId(data.product._id);
@@ -39,10 +59,8 @@ const AddProduct = () => {
       }
     };
 
-    if (!productId) {
-      createDraftProduct();
-    }
-  }, []);
+    initializeProduct();
+  }, [draftId]);
 
   /* HANDLE IMAGE CHANGE | SAVE TO DRAFT */
   const handleImageChange = async (
@@ -54,10 +72,8 @@ const AddProduct = () => {
     if (!file) return;
 
     if (index == 1) {
-      setImage(file);
       setPreview(URL.createObjectURL(file));
     } else if (index == 2) {
-      setImage2(file);
       setPreview2(URL.createObjectURL(file));
     }
 
@@ -100,7 +116,7 @@ const AddProduct = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ["image" + index]: data.secure_url,
+            [`image${index}`]: data.secure_url,
           }),
         })
           .then(() => {
@@ -134,7 +150,8 @@ const AddProduct = () => {
           body: JSON.stringify({
             title,
             price,
-            image: imageUrl,
+            image1: imageUrl,
+            image2: imageUrl2,
             published: true,
           }),
         },
@@ -175,7 +192,7 @@ const AddProduct = () => {
           onChange={(e) => setPrice(e.target.value)}
         />
       </div>
-      // image 1 //
+
       <div className={styles.formGroup}>
         <label>Product Image1</label>
 
@@ -199,7 +216,7 @@ const AddProduct = () => {
           <p>{imageUrl}</p>
         </div>
       )}
-      // image 2 //
+
       <div className={styles.formGroup}>
         <label>Product Image2</label>
 

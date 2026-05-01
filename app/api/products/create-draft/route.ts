@@ -7,9 +7,10 @@ export async function POST() {
     await connectDB();
 
     const product = await Product.create({
-      title: "product title",
-      price:"100",
-      image: "image_url",
+      title: "",
+      price: "",
+      image1: "",
+      image2: "",
       published: false,
     });
 

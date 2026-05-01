@@ -2,6 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await connectDB();
+
+    const { id } = await params;
+    const product = await Product.findById(id).lean();
+
+    return NextResponse.json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to fetch product",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,6 +49,9 @@ export async function PUT(
       {
         ...body
       },
+      {
+        new: true,
+      }
     );
 
     return NextResponse.json({
