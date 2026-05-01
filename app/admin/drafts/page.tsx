@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Product {
@@ -12,8 +12,10 @@ interface Product {
 }
 
 const Drafts = () => {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDrafts();
@@ -22,8 +24,6 @@ const Drafts = () => {
   const fetchDrafts = async () => {
     try {
       const res = await fetch("/api/products/drafts");
-      console.log("drafts----------------",res);
-      
       const data = await res.json();
 
       setProducts(data.products || []);
@@ -31,6 +31,27 @@ const Drafts = () => {
       console.log(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (productId: string) => {
+    try {
+      setDeletingId(productId);
+
+      const res = await fetch(`/api/products/create-product/${productId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setProducts((currentProducts) =>
+          currentProducts.filter((product) => product._id !== productId),
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -54,59 +75,75 @@ const Drafts = () => {
           }}
         >
           {products.map((product) => (
-            <Link
+            <div
               key={product._id}
-              href={`/admin/addproduct?id=${product._id}`}
               style={{
-                display: "block",
                 border: "1px solid #ddd",
                 borderRadius: "10px",
                 padding: "15px",
-                color: "inherit",
-                textDecoration: "none",
-                cursor: "pointer",
               }}
             >
-              {(product.image1 || product.image2)?.startsWith("http") ? (
-                <img
-                  src={product.image1 || product.image2 || ""}
-                  alt={product.title}
+              <div
+                onClick={() => router.push(`/admin/addproduct?id=${product._id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                {(product.image1 || product.image2)?.startsWith("http") ? (
+                  <img
+                    src={product.image1 || product.image2 || ""}
+                    alt={product.title}
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover",
+                      borderRadius: "10px",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      display: "grid",
+                      placeItems: "center",
+                      background: "#f3f4f6",
+                      color: "#64748b",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    No image
+                  </div>
+                )}
+
+                <h3>{product.title || "Untitled Product"}</h3>
+                <p>Rs. {product.price || "0"}</p>
+                <p
                   style={{
-                    width: "100%",
-                    height: "200px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    display: "grid",
-                    placeItems: "center",
-                    background: "#f3f4f6",
-                    color: "#64748b",
-                    borderRadius: "10px",
+                    color: "orange",
+                    fontWeight: "bold",
                   }}
                 >
-                  No image
-                </div>
-              )}
+                  Draft
+                </p>
+              </div>
 
-              <h3>{product.title || "Untitled Product"}</h3>
-
-              <p>₹ {product.price || "0"}</p>
-
-              <p
+              <button
+                type="button"
+                onClick={() => handleDelete(product._id)}
+                disabled={deletingId === product._id}
                 style={{
-                  color: "orange",
-                  fontWeight: "bold",
+                  marginTop: "12px",
+                  width: "100%",
+                  padding: "10px 12px",
+                  border: "none",
+                  borderRadius: "8px",
+                  background: deletingId === product._id ? "#cbd5e1" : "#dc2626",
+                  color: "#fff",
+                  cursor: deletingId === product._id ? "not-allowed" : "pointer",
                 }}
               >
-                Draft
-              </p>
-            </Link>
+                {deletingId === product._id ? "Deleting..." : "Delete Draft"}
+              </button>
+            </div>
           ))}
         </div>
       )}

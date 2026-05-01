@@ -72,3 +72,33 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await connectDB();
+
+    const { id } = await params;
+
+    await Product.findByIdAndDelete(id);
+
+    return NextResponse.json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to delete product",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
