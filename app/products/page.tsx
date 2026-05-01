@@ -1,13 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import ProductImageSlider from "../components/ProductImageSlider";
 
 interface Product {
   _id: string;
   title: string;
   price: string;
   image1: string;
-  image2:string
+  image2: string;
 }
 
 const PAGE_SIZE = 8;
@@ -78,8 +80,6 @@ const Products = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      {/* <h1>Published Products</h1> */}
-
       {error && (
         <p style={{ color: "#b91c1c", marginTop: "12px" }}>{error}</p>
       )}
@@ -94,6 +94,7 @@ const Products = () => {
       >
         {products.map((product, index) => {
           const isLastItem = index === products.length - 1;
+
           return (
             <div
               key={product._id}
@@ -108,48 +109,39 @@ const Products = () => {
                 justifyContent: "space-between",
               }}
             >
-              {product.image1 && product.image1.startsWith("http") ? (
-                <img
-                  src={product.image1}
-                  alt={product.title}
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                    marginBottom: "12px",
-                  }}
+              <Link
+                href={`/product/${product._id}`}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  flex: 1,
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
+                <ProductImageSlider
+                  image1={product.image1}
+                  image2={product.image2}
+                  alt={product.title || "Product image"}
                 />
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    display: "grid",
-                    placeItems: "center",
-                    background: "#f3f4f6",
-                    color: "#64748b",
-                    borderRadius: "10px",
-                    marginBottom: "12px",
-                  }}
-                >
-                  No image
-                </div>
-              )}
 
-              <div>
-                <h3>{product.title || "Untitled Product"}</h3>
-                <p style={{ fontSize: "1rem", margin: "8px 0" }}>
-                  ₹ {product.price || "0"}
-                </p>
-              </div>
+                <div>
+                  <h3>{product.title || "Untitled Product"}</h3>
+                  <p style={{ fontSize: "1rem", margin: "8px 0" }}>
+                    INR {product.price || "0"}
+                  </p>
+                </div>
+              </Link>
             </div>
           );
         })}
       </div>
 
       {loading && <h2 style={{ marginTop: "20px" }}>Loading products...</h2>}
-      {loadingMore && <p style={{ marginTop: "20px" }}>Loading more products...</p>}
+      {loadingMore && (
+        <p style={{ marginTop: "20px" }}>Loading more products...</p>
+      )}
       {!loading && products.length === 0 && (
         <p style={{ marginTop: "20px" }}>No published products found.</p>
       )}
