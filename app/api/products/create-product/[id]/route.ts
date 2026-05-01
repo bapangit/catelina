@@ -13,15 +13,13 @@ export async function PUT(
 
     const { id } = await params;
 
+    console.log("body------------------------",body)
+
     const product = await Product.findByIdAndUpdate(
       id,
       {
-        title: body.title,
-        price: body.price,
-        image: body.image,
-        published: body.published,
+        ...body
       },
-      { new: true }
     );
 
     return NextResponse.json({

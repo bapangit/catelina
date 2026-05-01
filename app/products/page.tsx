@@ -6,7 +6,8 @@ interface Product {
   _id: string;
   title: string;
   price: string;
-  image: string;
+  image1: string;
+  image2:string
 }
 
 const PAGE_SIZE = 8;
@@ -107,9 +108,9 @@ const Products = () => {
                 justifyContent: "space-between",
               }}
             >
-              {product.image && product.image.startsWith("http") ? (
+              {product.image1 && product.image1.startsWith("http") ? (
                 <img
-                  src={product.image}
+                  src={product.image1}
                   alt={product.title}
                   style={{
                     width: "100%",

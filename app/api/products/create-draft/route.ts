@@ -13,6 +13,8 @@ export async function POST() {
       published: false,
     });
 
+    console.log("------------------------create draft")
+
     return NextResponse.json({
       success: true,
       product,

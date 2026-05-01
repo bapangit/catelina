@@ -4,7 +4,8 @@ const productSchema = new Schema(
   {
     title: String,
     price: String,
-    image: String,
+    image1: String,
+    image2: String,
     published: { type: Boolean, default: false },
   },
   {
