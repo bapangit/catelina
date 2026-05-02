@@ -1,6 +1,8 @@
 "use client";
 
 import { use, useState, ChangeEvent, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 type AddProductPageProps = {
@@ -8,6 +10,23 @@ type AddProductPageProps = {
 };
 
 const AddProduct = ({ searchParams }: AddProductPageProps) => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+    if (!session || session.user.role !== 'admin') {
+      router.push('/'); // Redirect to home or unauthorized page
+    }
+  }, [session, status, router]);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (!session || session.user.role !== 'admin') {
+    return <div>Access Denied</div>;
+  }
   const resolvedSearchParams = use(searchParams);
   const draftId =
     typeof resolvedSearchParams.id === "string"

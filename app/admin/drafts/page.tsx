@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface Product {
   _id: string;
@@ -13,14 +14,28 @@ interface Product {
 }
 
 const Drafts = () => {
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchDrafts();
-  }, []);
+    if (status === 'loading') return;
+    if (!session || session.user.role !== 'admin') {
+      router.push('/');
+    } else {
+      fetchDrafts();
+    }
+  }, [session, status, router]);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (!session || session.user.role !== 'admin') {
+    return <div>Access Denied</div>;
+  }
 
   const fetchDrafts = async () => {
     try {

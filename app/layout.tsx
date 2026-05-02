@@ -4,14 +4,7 @@ import "./globals.css";
 
 import styles from "./page.module.css";
 import Providers from "./providers";
-import { LuShoppingCart } from "react-icons/lu";
-import { IoMdAdd } from "react-icons/io";
-import { RiDraftLine } from "react-icons/ri";
-
-
-import SearchComp from "../components/SearchComponent";
-import ProfileComp from "../components/ProfileComponent";
-import Link from "next/link";
+import Header from "./components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,41 +34,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers>
           <main className={styles.main}>
-            <header className={styles.header}>
-              <SearchComp styles={styles} />
-             <Link href="/"> <p className={styles.p}>Ecom App</p></Link>
-              <nav className={styles.nav}>
-                <ol className={styles.ol}>
-                  <li className={styles.icon_style}>
-                    <Link href="/products">Products</Link>
-                  </li>
-                  <li>Categories</li>
-                  <li>Most Rated</li>
-                </ol>
-              </nav>
-              <div className={styles.header_secondary_nav}>
-                <ul>
-                  <li>
-                    <Link href="/admin/addproduct" className={styles.addButton}>
-                      <IoMdAdd className="icon" />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/admin/drafts" className={styles.draftButton}>
-                      <RiDraftLine className="icon" />
-                    </Link>
-                  </li>
-                  <li>
-                    <span>
-                      <LuShoppingCart className="icon" />
-                    </span>
-                  </li>
-                  <li>
-                    <ProfileComp styles={styles} />
-                  </li>
-                </ul>
-              </div>
-            </header>
+            <Header styles={styles} />
             {children}
             <footer>
               <div></div>
