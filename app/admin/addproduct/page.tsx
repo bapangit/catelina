@@ -51,8 +51,9 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           if (data.success && data.product) {
             setProductId(data.product._id || draftId);
             setTitle(data.product.title || "");
+            setDescription(data.product.description || "");
             setPrice(data.product.price || "");
-            setPrevPrice(data.prevPrice.prevPrice || "");
+            setPrevPrice(data.product.prevPrice || "");
             setImageUrl(data.product.image1 || "");
             setPreview(data.product.image1 || "");
             setImageUrl2(data.product.image2 || "");
