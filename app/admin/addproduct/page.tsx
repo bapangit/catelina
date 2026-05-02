@@ -18,7 +18,9 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
 
   const [productId, setProductId] = useState("");
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [prevPrice, setPrevPrice] = useState("");
   const [preview, setPreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -38,6 +40,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             setProductId(data.product._id || draftId);
             setTitle(data.product.title || "");
             setPrice(data.product.price || "");
+            setPrevPrice(data.prevPrice.prevPrice || "");
             setImageUrl(data.product.image1 || "");
             setPreview(data.product.image1 || "");
             setImageUrl2(data.product.image2 || "");
@@ -149,7 +152,9 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           },
           body: JSON.stringify({
             title,
+            description:description,
             price,
+            prevPrice,
             image1: imageUrl,
             image2: imageUrl2,
             published: true,
@@ -168,6 +173,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
     }
   };
 
+
   return (
     <>
       <h2>Add New Product</h2>
@@ -182,6 +188,18 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
+
+      <div className={styles.formGroup}>
+        <label>Product Description</label>
+
+        <input
+          type="text"
+          placeholder="Enter product Sescription"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+
       <div className={styles.formGroup}>
         <label>Price</label>
 
@@ -190,6 +208,17 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           placeholder="Enter product price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Prev Price</label>
+
+        <input
+          type="number"
+          placeholder="Enter product prev price"
+          value={prevPrice}
+          onChange={(e) => setPrevPrice(e.target.value)}
         />
       </div>
 

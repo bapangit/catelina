@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 interface Product {
   _id: string;
   title: string;
+  description:string;
   price: string;
   image1?: string;
   image2?: string;

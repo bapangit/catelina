@@ -7,7 +7,9 @@ import ProductImageSlider from "../components/ProductImageSlider";
 interface Product {
   _id: string;
   title: string;
+  description:string;
   price: string;
+  prevPrice: string;
   image1: string;
   image2: string;
 }
@@ -128,8 +130,18 @@ const Products = () => {
 
                 <div>
                   <h3>{product.title || "Untitled Product"}</h3>
-                  <p style={{ fontSize: "1rem", margin: "8px 0" }}>
-                    INR {product.price || "0"}
+                  <div style={{ margin: "8px 0" }}>
+                    {product.prevPrice && (
+                      <span style={{ textDecoration: "line-through", color: "#999", fontSize: "0.9rem", marginRight: "8px" }}>
+                        INR {product.prevPrice}
+                      </span>
+                    )}
+                    <p style={{ fontSize: "1rem", display: "inline" }}>
+                      INR {product.price || "0"}
+                    </p>
+                  </div>
+                  <p style={{ fontSize: "0.9rem", color: "#666", margin: "8px 0" }}>
+                    {product.description || "No description available"}
                   </p>
                 </div>
               </Link>
