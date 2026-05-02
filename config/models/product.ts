@@ -8,6 +8,7 @@ const productSchema = new Schema(
     prevPrice:String,
     image1: String,
     image2: String,
+    fabric:String,
     published: { type: Boolean, default: false },
   },
   {

@@ -36,15 +36,18 @@
   color: #333;
 }
 
-.formGroup input {
+.formGroup input,
+.formGroup select {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 16px;
   outline: none;
+  background: #fff;
 }
 
-.formGroup input:focus {
+.formGroup input:focus,
+.formGroup select:focus {
   border-color: #0070f3;
 }
 

@@ -4,6 +4,7 @@ import { use, useState, ChangeEvent, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import { fabricOptions } from "@/config/productInfoOpt";
 
 type AddProductPageProps = {
   searchParams: Promise<{ id?: string | string[] }>;
@@ -32,6 +33,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [prevPrice, setPrevPrice] = useState("");
+  const [fabric, setFabric] = useState("");
   const [preview, setPreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -54,6 +56,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             setDescription(data.product.description || "");
             setPrice(data.product.price || "");
             setPrevPrice(data.product.prevPrice || "");
+            setFabric(data.product.fabric || "");
             setImageUrl(data.product.image1 || "");
             setPreview(data.product.image1 || "");
             setImageUrl2(data.product.image2 || "");
@@ -172,6 +175,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             description:description,
             price,
             prevPrice,
+            fabric,
             image1: imageUrl,
             image2: imageUrl2,
             published,
@@ -247,6 +251,19 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           value={prevPrice}
           onChange={(e) => setPrevPrice(e.target.value)}
         />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Fabric</label>
+
+        <select value={fabric} onChange={(e) => setFabric(e.target.value)}>
+          <option value="">Select fabric</option>
+          {fabricOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.formGroup}>

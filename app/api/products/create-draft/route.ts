@@ -11,6 +11,7 @@ export async function POST() {
       price: "",
       image1: "",
       image2: "",
+      fabric:"",
       published: false,
     });
 

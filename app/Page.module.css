@@ -1,11 +1,16 @@
 .main {
-  /* main styles */
+  padding-top: 60px;
 }
 
 .header {
   height: 60px;
   border-bottom: 1px solid grey;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: var(--background);
 }
 
 .search{
