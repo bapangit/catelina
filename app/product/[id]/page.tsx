@@ -17,6 +17,17 @@ type ProductRecord = {
   description?: string;
   image1?: string;
   image2?: string;
+  fabric?: string;
+  pattern?: string;
+  occasion?: string;
+  fit?: string;
+  neckline?: string;
+  closure?: string;
+  packSize?: string;
+  dressesSubcategory?: string;
+  sleeveStyle?: string;
+  dressShape?: string;
+  careInstructions?: string;
 };
 
 async function getProductById(id: string): Promise<ProductRecord | null> {
@@ -45,6 +56,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) {
     notFound();
   }
+
+  const productDetails = [
+    { label: "Material", value: product.fabric },
+    { label: "Pattern", value: product.pattern },
+    { label: "Occasion", value: product.occasion },
+    { label: "Fit", value: product.fit },
+    { label: "Neckline", value: product.neckline },
+    { label: "Closure", value: product.closure },
+    { label: "Pack Size", value: product.packSize },
+    { label: "Dresses Subcategory", value: product.dressesSubcategory },
+    { label: "Sleeve Style", value: product.sleeveStyle },
+    { label: "Dress Shape", value: product.dressShape },
+  ].filter((detail) => Boolean(detail.value));
+
+  const hasProductInfo =
+    productDetails.length > 0 || Boolean(product.careInstructions);
 
   return (
     <div className={styles.container}>
@@ -82,6 +109,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <button type="button" className={styles.sizeButton}>L</button>
             </div>
           </div>
+          {hasProductInfo ? (
+            <section className={styles.infoSection}>
+              <h2 className={styles.infoHeading}>Product Information</h2>
+              <div className={styles.infoCard}>
+                <h3 className={styles.infoTitle}>Product details</h3>
+                {productDetails.length > 0 ? (
+                  <div className={styles.infoGrid}>
+                    {productDetails.map((detail) => (
+                      <div key={detail.label} className={styles.infoItem}>
+                        <span className={styles.infoLabel}>{detail.label}</span>
+                        <span className={styles.infoValue}>{detail.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {product.careInstructions ? (
+                  <div className={styles.careSection}>
+                    <span className={styles.infoLabel}>Care Instructions</span>
+                    <span className={styles.infoValue}>
+                      {product.careInstructions}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            </section>
+          ) : null}
         </div>
       </div>
     </div>

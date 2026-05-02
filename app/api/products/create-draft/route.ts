@@ -8,10 +8,22 @@ export async function POST() {
 
     const product = await Product.create({
       title: "",
+      description: "",
       price: "",
+      prevPrice: "",
       image1: "",
       image2: "",
-      fabric:"",
+      fabric: "",
+      pattern: "",
+      occasion: "",
+      fit: "",
+      neckline: "",
+      closure: "",
+      packSize: "",
+      dressesSubcategory: "",
+      sleeveStyle: "",
+      dressShape: "",
+      careInstructions: "",
       published: false,
     });
 

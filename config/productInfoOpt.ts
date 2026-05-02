@@ -31,3 +31,99 @@ export const fabricOptions = [
   "Modal",
   "Hemp"
 ];
+
+export const patternOptions = [
+  "Solid",
+  "Printed",
+  "Embroidered",
+  "Striped",
+  "Checked",
+  "Floral",
+  "Abstract",
+  "Textured",
+];
+
+export const occasionOptions = [
+  "Casual",
+  "Party",
+  "Festive",
+  "Workwear",
+  "Vacation",
+  "Wedding",
+  "Evening",
+];
+
+export const fitOptions = [
+  "Slim",
+  "Regular",
+  "Relaxed",
+  "Oversized",
+  "Skinny",
+  "Bodycon",
+];
+
+export const necklineOptions = [
+  "Round Neck",
+  "V-Neck",
+  "Square Neck",
+  "Shoulder Straps",
+  "Off Shoulder",
+  "Collared",
+  "Sweetheart Neck",
+  "Halter Neck",
+];
+
+export const closureOptions = [
+  "Pull On",
+  "Back Closure",
+  "Side Zip",
+  "Front Zip",
+  "Button Closure",
+  "Hook and Eye",
+  "Tie-Up",
+];
+
+export const packSizeOptions = [
+  "Single",
+  "Pack of 2",
+  "Pack of 3",
+  "Set",
+];
+
+export const dressesSubcategoryOptions = [
+  "Mini",
+  "Midi",
+  "Maxi",
+  "A-Line",
+  "Bodycon",
+  "Shift",
+  "Wrap",
+];
+
+export const sleeveStyleOptions = [
+  "Sleeveless",
+  "Cap Sleeves",
+  "Short Sleeves",
+  "Three-Quarter Sleeves",
+  "Long Sleeves",
+  "Puff Sleeves",
+  "Bell Sleeves",
+];
+
+export const dressShapeOptions = [
+  "Bodycon",
+  "A-Line",
+  "Fit and Flare",
+  "Sheath",
+  "Straight",
+  "Wrap",
+  "Empire",
+];
+
+export const careInstructionOptions = [
+  "Machine Wash",
+  "Hand Wash",
+  "Dry Clean Only",
+  "Machine Wash / Dry Cleaning",
+  "Gentle Wash",
+];

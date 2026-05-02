@@ -4,7 +4,19 @@ import { use, useState, ChangeEvent, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import { fabricOptions } from "@/config/productInfoOpt";
+import {
+  careInstructionOptions,
+  closureOptions,
+  dressShapeOptions,
+  dressesSubcategoryOptions,
+  fabricOptions,
+  fitOptions,
+  necklineOptions,
+  occasionOptions,
+  packSizeOptions,
+  patternOptions,
+  sleeveStyleOptions,
+} from "@/config/productInfoOpt";
 
 type AddProductPageProps = {
   searchParams: Promise<{ id?: string | string[] }>;
@@ -34,6 +46,16 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [price, setPrice] = useState("");
   const [prevPrice, setPrevPrice] = useState("");
   const [fabric, setFabric] = useState("");
+  const [pattern, setPattern] = useState("");
+  const [occasion, setOccasion] = useState("");
+  const [fit, setFit] = useState("");
+  const [neckline, setNeckline] = useState("");
+  const [closure, setClosure] = useState("");
+  const [packSize, setPackSize] = useState("");
+  const [dressesSubcategory, setDressesSubcategory] = useState("");
+  const [sleeveStyle, setSleeveStyle] = useState("");
+  const [dressShape, setDressShape] = useState("");
+  const [careInstructions, setCareInstructions] = useState("");
   const [preview, setPreview] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -57,6 +79,16 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             setPrice(data.product.price || "");
             setPrevPrice(data.product.prevPrice || "");
             setFabric(data.product.fabric || "");
+            setPattern(data.product.pattern || "");
+            setOccasion(data.product.occasion || "");
+            setFit(data.product.fit || "");
+            setNeckline(data.product.neckline || "");
+            setClosure(data.product.closure || "");
+            setPackSize(data.product.packSize || "");
+            setDressesSubcategory(data.product.dressesSubcategory || "");
+            setSleeveStyle(data.product.sleeveStyle || "");
+            setDressShape(data.product.dressShape || "");
+            setCareInstructions(data.product.careInstructions || "");
             setImageUrl(data.product.image1 || "");
             setPreview(data.product.image1 || "");
             setImageUrl2(data.product.image2 || "");
@@ -176,6 +208,16 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             price,
             prevPrice,
             fabric,
+            pattern,
+            occasion,
+            fit,
+            neckline,
+            closure,
+            packSize,
+            dressesSubcategory,
+            sleeveStyle,
+            dressShape,
+            careInstructions,
             image1: imageUrl,
             image2: imageUrl2,
             published,
@@ -254,16 +296,153 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       </div>
 
       <div className={styles.formGroup}>
-        <label>Fabric</label>
+        <label>Material</label>
 
         <select value={fabric} onChange={(e) => setFabric(e.target.value)}>
-          <option value="">Select fabric</option>
+          <option value="">Select material</option>
           {fabricOptions.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
           ))}
         </select>
+      </div>
+
+      <div className={styles.infoSection}>
+        <h3 className={styles.sectionTitle}>Product Information</h3>
+        <div className={styles.infoGrid}>
+          <div className={styles.formGroup}>
+            <label>Pattern</label>
+            <select value={pattern} onChange={(e) => setPattern(e.target.value)}>
+              <option value="">Select pattern</option>
+              {patternOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Occasion</label>
+            <select value={occasion} onChange={(e) => setOccasion(e.target.value)}>
+              <option value="">Select occasion</option>
+              {occasionOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Fit</label>
+            <select value={fit} onChange={(e) => setFit(e.target.value)}>
+              <option value="">Select fit</option>
+              {fitOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Neckline</label>
+            <select value={neckline} onChange={(e) => setNeckline(e.target.value)}>
+              <option value="">Select neckline</option>
+              {necklineOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Closure</label>
+            <select value={closure} onChange={(e) => setClosure(e.target.value)}>
+              <option value="">Select closure</option>
+              {closureOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Pack Size</label>
+            <select value={packSize} onChange={(e) => setPackSize(e.target.value)}>
+              <option value="">Select pack size</option>
+              {packSizeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Dresses Subcategory</label>
+            <select
+              value={dressesSubcategory}
+              onChange={(e) => setDressesSubcategory(e.target.value)}
+            >
+              <option value="">Select subcategory</option>
+              {dressesSubcategoryOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Sleeve Style</label>
+            <select
+              value={sleeveStyle}
+              onChange={(e) => setSleeveStyle(e.target.value)}
+            >
+              <option value="">Select sleeve style</option>
+              {sleeveStyleOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Dress Shape</label>
+            <select
+              value={dressShape}
+              onChange={(e) => setDressShape(e.target.value)}
+            >
+              <option value="">Select dress shape</option>
+              {dressShapeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Care Instructions</label>
+            <select
+              value={careInstructions}
+              onChange={(e) => setCareInstructions(e.target.value)}
+            >
+              <option value="">Select care instructions</option>
+              {careInstructionOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       <div className={styles.formGroup}>
