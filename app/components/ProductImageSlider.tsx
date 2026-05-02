@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { MouseEvent } from "react";
 import { useState } from "react";
 
 type ProductImageSliderProps = {
@@ -52,6 +53,15 @@ export default function ProductImageSlider({
     setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  const handleSliderControlClick = (
+    event: MouseEvent<HTMLButtonElement>,
+    action: () => void
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    action();
+  };
+
   return (
     <div style={{ marginBottom: "12px" }}>
       <div
@@ -78,7 +88,7 @@ export default function ProductImageSlider({
           <>
             <button
               type="button"
-              onClick={goToPrevious}
+              onClick={(event) => handleSliderControlClick(event, goToPrevious)}
               aria-label="Show previous product image"
               style={navButtonStyle("left")}
             >
@@ -86,7 +96,7 @@ export default function ProductImageSlider({
             </button>
             <button
               type="button"
-              onClick={goToNext}
+              onClick={(event) => handleSliderControlClick(event, goToNext)}
               aria-label="Show next product image"
               style={navButtonStyle("right")}
             >
@@ -109,7 +119,9 @@ export default function ProductImageSlider({
             <button
               key={`${image}-${index}`}
               type="button"
-              onClick={() => setActiveIndex(index)}
+              onClick={(event) =>
+                handleSliderControlClick(event, () => setActiveIndex(index))
+              }
               aria-label={`Show product image ${index + 1}`}
               aria-pressed={currentIndex === index}
               style={{

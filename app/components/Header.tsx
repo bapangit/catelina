@@ -8,7 +8,11 @@ import SearchComp from "../../components/SearchComponent";
 import ProfileComp from "../../components/ProfileComponent";
 import Link from "next/link";
 
-export default function Header({ styles }: { styles: any }) {
+type HeaderProps = {
+  styles: Record<string, string>;
+};
+
+export default function Header({ styles }: HeaderProps) {
   const { data: session } = useSession();
 
   const isAdmin = session?.user?.role === 'admin';
@@ -22,7 +26,9 @@ export default function Header({ styles }: { styles: any }) {
           <li className={styles.icon_style}>
             <Link href="/products">Products</Link>
           </li>
-          <li>Categories</li>
+          <li>
+            <Link href="/categories">Categories</Link>
+          </li>
           <li>Most Rated</li>
         </ol>
       </nav>
