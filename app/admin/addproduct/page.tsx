@@ -12,21 +12,6 @@ type AddProductPageProps = {
 const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'loading') return; // Still loading
-    if (!session || session.user.role !== 'admin') {
-      router.push('/'); // Redirect to home or unauthorized page
-    }
-  }, [session, status, router]);
-
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-
-  if (!session || session.user.role !== 'admin') {
-    return <div>Access Denied</div>;
-  }
   const resolvedSearchParams = use(searchParams);
   const draftId =
     typeof resolvedSearchParams.id === "string"
@@ -34,6 +19,13 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       : Array.isArray(resolvedSearchParams.id)
         ? resolvedSearchParams.id[0]
         : undefined;
+
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+    if (!session || session.user.role !== 'admin') {
+      router.push('/'); // Redirect to home or unauthorized page
+    }
+  }, [session, status, router]);
 
   const [productId, setProductId] = useState("");
   const [title, setTitle] = useState("");
@@ -47,6 +39,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [preview2, setPreview2] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
   const [uploading2, setUploading2] = useState(false);
+  const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
 
   useEffect(() => {
     const initializeProduct = async () => {
@@ -160,8 +153,12 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   };
 
   /* SAVE PRODUCT */
-  const saveProduct = async () => {
+  const saveProduct = async (published: boolean) => {
+    const saveMode = published ? "publish" : "draft";
+
     try {
+      setSaving(saveMode);
+
       const response = await fetch(
         `/api/products/create-product/${productId}`,
         {
@@ -176,7 +173,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             prevPrice,
             image1: imageUrl,
             image2: imageUrl2,
-            published: true,
+            published,
           }),
         },
       );
@@ -184,13 +181,23 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       const data = await response.json();
 
       if (data.success) {
-        alert("Product Saved");
+        alert(published ? "Product published" : "Product saved to draft");
         console.log(data.product);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setSaving(null);
     }
   };
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (!session || session.user.role !== 'admin') {
+    return <div>Access Denied</div>;
+  }
 
 
   return (
@@ -288,9 +295,24 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           <p>{imageUrl2}</p>
         </div>
       )}
-      <button onClick={saveProduct} className={styles.button}>
-        Add Product
-      </button>
+      <div className={styles.buttonRow}>
+        <button
+          type="button"
+          onClick={() => saveProduct(false)}
+          className={`${styles.button} ${styles.secondaryButton}`}
+          disabled={saving !== null}
+        >
+          {saving === "draft" ? "Saving Draft..." : "Save to Draft"}
+        </button>
+        <button
+          type="button"
+          onClick={() => saveProduct(true)}
+          className={styles.button}
+          disabled={saving !== null}
+        >
+          {saving === "publish" ? "Publishing..." : "Publish"}
+        </button>
+      </div>
     </>
   );
 };
