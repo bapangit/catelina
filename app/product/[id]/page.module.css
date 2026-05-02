@@ -50,11 +50,26 @@
   gap: 0.4rem;
 }
 
+.priceLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+
 .price {
   font-size: 2rem;
   color: #111827;
   font-weight: 800;
   margin: 0;
+}
+
+.prevPrice {
+  margin: 0;
+  color: #af9c9c;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: line-through;
 }
 
 .taxText {

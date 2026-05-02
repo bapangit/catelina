@@ -13,6 +13,7 @@ type ProductRecord = {
   _id: string;
   title?: string;
   price?: string;
+  prevPrice?: string;
   description?: string;
   image1?: string;
   image2?: string;
@@ -61,9 +62,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className={styles.headerRow}>
             <h1 className={styles.title}>{product.title || "Untitled Product"}</h1>
           </div>
-          <p className={styles.description}>{product.description || "No description available."}</p>
+          <p className={styles.description}>
+            {product.description || "No description available."}
+          </p>
           <div className={styles.priceRow}>
-            <p className={styles.price}>₹{product.price || "0"}</p>
+            <div className={styles.priceLine}>
+              <p className={styles.price}>Rs. {product.price || "0"}</p>
+              {product.prevPrice ? (
+                <p className={styles.prevPrice}>Rs. {product.prevPrice}</p>
+              ) : null}
+            </div>
             <span className={styles.taxText}>MRP inclusive of all taxes</span>
           </div>
           <div className={styles.optionSection}>
