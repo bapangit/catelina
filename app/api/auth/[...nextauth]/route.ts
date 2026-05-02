@@ -17,7 +17,7 @@ export const authOptions: AuthOptions = {
     strategy:"jwt"
   },
   callbacks:{
-    async signIn({account,profile}) {
+    async signIn({ profile }) {
       if(!profile?.email){
         throw new Error("email not found")
       }
