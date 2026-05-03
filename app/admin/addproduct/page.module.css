@@ -1,10 +1,16 @@
+.pageShell {
+  min-height: calc(100vh - 60px);
+  background: #f3f4f6;
+  padding: 24px 16px 32px;
+}
+
 .container {
   width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f4f4f4;
+  background: #c6c4c4;
   padding: 20px;
 }
 
@@ -61,7 +67,7 @@
 
 .imageGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
 }
 

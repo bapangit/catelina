@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 
-type ImageField = "image1" | "image2";
+type ImageField = "image1" | "image2" | "image3" | "image4" | "image5";
+const imageFields: ImageField[] = ["image1", "image2", "image3", "image4", "image5"];
 
 const getCloudinaryPublicId = (imageUrl: string) => {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (clearProductImage && (!productId || (imageField !== "image1" && imageField !== "image2"))) {
+    if (clearProductImage && (!productId || !imageField || !imageFields.includes(imageField))) {
       return NextResponse.json(
         { success: false, message: "Product ID and image field are required" },
         { status: 400 },

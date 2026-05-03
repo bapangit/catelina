@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, ChangeEvent, useEffect } from "react";
+import { use, useState, ChangeEvent, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
@@ -22,11 +22,16 @@ type AddProductPageProps = {
   searchParams: Promise<{ id?: string | string[] }>;
 };
 
-type ImageIndex = 1 | 2;
+type ImageIndex = 1 | 2 | 3 | 4 | 5;
 
 const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef2 = useRef<HTMLInputElement>(null);
+  const imageInputRef3 = useRef<HTMLInputElement>(null);
+  const imageInputRef4 = useRef<HTMLInputElement>(null);
+  const imageInputRef5 = useRef<HTMLInputElement>(null);
   const resolvedSearchParams = use(searchParams);
   const draftId =
     typeof resolvedSearchParams.id === "string"
@@ -65,6 +70,15 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [preview2, setPreview2] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
   const [uploading2, setUploading2] = useState(false);
+  const [preview3, setPreview3] = useState("");
+  const [imageUrl3, setImageUrl3] = useState("");
+  const [uploading3, setUploading3] = useState(false);
+  const [preview4, setPreview4] = useState("");
+  const [imageUrl4, setImageUrl4] = useState("");
+  const [uploading4, setUploading4] = useState(false);
+  const [preview5, setPreview5] = useState("");
+  const [imageUrl5, setImageUrl5] = useState("");
+  const [uploading5, setUploading5] = useState(false);
   const [deletingImage, setDeletingImage] = useState<ImageIndex | null>(null);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
 
@@ -96,6 +110,12 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             setPreview(data.product.image1 || "");
             setImageUrl2(data.product.image2 || "");
             setPreview2(data.product.image2 || "");
+            setImageUrl3(data.product.image3 || "");
+            setPreview3(data.product.image3 || "");
+            setImageUrl4(data.product.image4 || "");
+            setPreview4(data.product.image4 || "");
+            setImageUrl5(data.product.image5 || "");
+            setPreview5(data.product.image5 || "");
             return;
           }
         }
@@ -115,6 +135,98 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
 
     initializeProduct();
   }, [draftId]);
+
+  const getImageInput = (index: ImageIndex) => {
+    const inputs = {
+      1: imageInputRef,
+      2: imageInputRef2,
+      3: imageInputRef3,
+      4: imageInputRef4,
+      5: imageInputRef5,
+    };
+
+    return inputs[index].current;
+  };
+
+  const getImageUrl = (index: ImageIndex) => {
+    const urls = {
+      1: imageUrl,
+      2: imageUrl2,
+      3: imageUrl3,
+      4: imageUrl4,
+      5: imageUrl5,
+    };
+
+    return urls[index];
+  };
+
+  const getPreview = (index: ImageIndex) => {
+    const previews = {
+      1: preview,
+      2: preview2,
+      3: preview3,
+      4: preview4,
+      5: preview5,
+    };
+
+    return previews[index];
+  };
+
+  const getUploading = (index: ImageIndex) => {
+    const uploadStates = {
+      1: uploading,
+      2: uploading2,
+      3: uploading3,
+      4: uploading4,
+      5: uploading5,
+    };
+
+    return uploadStates[index];
+  };
+
+  const setImageUrlByIndex = (index: ImageIndex, url: string) => {
+    const setters = {
+      1: setImageUrl,
+      2: setImageUrl2,
+      3: setImageUrl3,
+      4: setImageUrl4,
+      5: setImageUrl5,
+    };
+
+    setters[index](url);
+  };
+
+  const setPreviewByIndex = (index: ImageIndex, url: string) => {
+    const setters = {
+      1: setPreview,
+      2: setPreview2,
+      3: setPreview3,
+      4: setPreview4,
+      5: setPreview5,
+    };
+
+    setters[index](url);
+  };
+
+  const setUploadingByIndex = (index: ImageIndex, isUploading: boolean) => {
+    const setters = {
+      1: setUploading,
+      2: setUploading2,
+      3: setUploading3,
+      4: setUploading4,
+      5: setUploading5,
+    };
+
+    setters[index](isUploading);
+  };
+
+  const clearImageInput = (index: ImageIndex) => {
+    const input = getImageInput(index);
+
+    if (input) {
+      input.value = "";
+    }
+  };
 
   const deleteCloudinaryImage = async (
     url: string,
@@ -151,22 +263,14 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
 
     if (!file) return;
 
-    const previousImageUrl = index === 1 ? imageUrl : imageUrl2;
-    const previousPreviewUrl = index === 1 ? preview : preview2;
+    const previousImageUrl = getImageUrl(index);
+    const previousPreviewUrl = getPreview(index);
     const nextPreviewUrl = URL.createObjectURL(file);
 
-    if (index == 1) {
-      setPreview(nextPreviewUrl);
-    } else if (index == 2) {
-      setPreview2(nextPreviewUrl);
-    }
+    setPreviewByIndex(index, nextPreviewUrl);
 
     try {
-      if (index == 1) {
-        setUploading(true);
-      } else if (index == 2) {
-        setUploading2(true);
-      }
+      setUploadingByIndex(index, true);
 
       const formData = new FormData();
 
@@ -209,11 +313,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           throw new Error(saveImageData.message || "Failed to save image");
         }
 
-        if (index == 1) {
-          setImageUrl(data.secure_url);
-        } else if (index == 2) {
-          setImageUrl2(data.secure_url);
-        }
+        setImageUrlByIndex(index, data.secure_url);
 
         if (previousImageUrl && previousImageUrl !== data.secure_url) {
           try {
@@ -231,21 +331,13 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
     } catch (error) {
       console.log(error);
 
-      if (index == 1) {
-        setImageUrl(previousImageUrl);
-        setPreview(previousPreviewUrl);
-      } else if (index == 2) {
-        setImageUrl2(previousImageUrl);
-        setPreview2(previousPreviewUrl);
-      }
+      setImageUrlByIndex(index, previousImageUrl);
+      setPreviewByIndex(index, previousPreviewUrl);
 
+      clearImageInput(index);
       alert(error instanceof Error ? error.message : "Failed to upload image");
     } finally {
-      if (index == 1) {
-        setUploading(false);
-      } else if (index == 2) {
-        setUploading2(false);
-      }
+      setUploadingByIndex(index, false);
     }
   };
 
@@ -281,6 +373,9 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             careInstructions,
             image1: imageUrl,
             image2: imageUrl2,
+            image3: imageUrl3,
+            image4: imageUrl4,
+            image5: imageUrl5,
             published,
           }),
         },
@@ -300,7 +395,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   };
 
   const deleteImage = async (index: ImageIndex) => {
-    const url = index === 1 ? imageUrl : imageUrl2;
+    const url = getImageUrl(index);
 
     if (!url) return;
 
@@ -308,13 +403,10 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       setDeletingImage(index);
       await deleteCloudinaryImage(url, index, true);
 
-      if (index === 1) {
-        setImageUrl("");
-        setPreview("");
-      } else {
-        setImageUrl2("");
-        setPreview2("");
-      }
+      setImageUrlByIndex(index, "");
+      setPreviewByIndex(index, "");
+
+      clearImageInput(index);
     } catch (error) {
       console.log(error);
       alert(error instanceof Error ? error.message : "Failed to delete image");
@@ -331,9 +423,16 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
     return <div>Access Denied</div>;
   }
 
+  const imageInputItems = [
+    { index: 1 as const, inputRef: imageInputRef },
+    { index: 2 as const, inputRef: imageInputRef2 },
+    { index: 3 as const, inputRef: imageInputRef3 },
+    { index: 4 as const, inputRef: imageInputRef4 },
+    { index: 5 as const, inputRef: imageInputRef5 },
+  ];
 
   return (
-    <>
+    <div className={styles.pageShell}>
       <h2>Add New Product</h2>
       <p>Product ID: {productId}</p>
       <div className={styles.formGroup}>
@@ -533,83 +632,59 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       <div className={styles.imageSection}>
         <h3 className={styles.sectionTitle}>Product Images</h3>
         <div className={styles.imageGrid}>
-          <div className={styles.imageCard}>
-            <div className={styles.formGroup}>
-              <label>Product Image 1</label>
+          {imageInputItems.map(({ index, inputRef }) => {
+            const currentPreview = getPreview(index);
+            const currentImageUrl = getImageUrl(index);
+            const currentUploading = getUploading(index);
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  handleImageChange(e, 1);
-                }}
-              />
-            </div>
-            {uploading && <p className={styles.uploadStatus}>Uploading image...</p>}
-            {preview && (
-              <div className={styles.previewBox}>
-                <img src={preview} alt="Preview" className={styles.previewImage} />
+            return (
+              <div key={index} className={styles.imageCard}>
+                <div className={styles.formGroup}>
+                  <label>Product Image {index}</label>
+
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      handleImageChange(e, index);
+                    }}
+                  />
+                </div>
+                {currentUploading && (
+                  <p className={styles.uploadStatus}>Uploading image...</p>
+                )}
+                {currentPreview && (
+                  <div className={styles.previewBox}>
+                    <img
+                      src={currentPreview}
+                      alt={`Preview ${index}`}
+                      className={styles.previewImage}
+                    />
+                  </div>
+                )}
+                {currentImageUrl && (
+                  <div className={styles.uploadSuccess}>
+                    <p>Uploaded Successfully</p>
+                    <p>{currentImageUrl}</p>
+                  </div>
+                )}
+
+                {currentImageUrl && (
+                  <button
+                    type="button"
+                    className={styles.deleteButton}
+                    disabled={deletingImage === index || currentUploading}
+                    onClick={() => {
+                      deleteImage(index);
+                    }}
+                  >
+                    {deletingImage === index ? "Deleting..." : "Delete"}
+                  </button>
+                )}
               </div>
-            )}
-            {imageUrl && (
-              <div className={styles.uploadSuccess}>
-                <p>Uploaded Successfully</p>
-                <p>{imageUrl}</p>
-              </div>
-            )}
-
-            {imageUrl && (
-              <button
-                type="button"
-                className={styles.deleteButton}
-                disabled={deletingImage === 1 || uploading}
-                onClick={() => {
-                  deleteImage(1);
-                }}
-              >
-                {deletingImage === 1 ? "Deleting..." : "Delete"}
-              </button>
-            )}
-          </div>
-
-          <div className={styles.imageCard}>
-            <div className={styles.formGroup}>
-              <label>Product Image 2</label>
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  handleImageChange(e, 2);
-                }}
-              />
-            </div>
-            {uploading2 && <p className={styles.uploadStatus}>Uploading image...</p>}
-            {preview2 && (
-              <div className={styles.previewBox}>
-                <img src={preview2} alt="Preview" className={styles.previewImage} />
-              </div>
-            )}
-            {imageUrl2 && (
-              <div className={styles.uploadSuccess}>
-                <p>Uploaded Successfully</p>
-                <p>{imageUrl2}</p>
-              </div>
-            )}
-
-            {imageUrl2 && (
-              <button
-                type="button"
-                className={styles.deleteButton}
-                disabled={deletingImage === 2 || uploading2}
-                onClick={() => {
-                  deleteImage(2);
-                }}
-              >
-                {deletingImage === 2 ? "Deleting..." : "Delete"}
-              </button>
-            )}
-          </div>
+            );
+          })}
         </div>
       </div>
       <div className={styles.buttonRow}>
@@ -630,7 +705,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           {saving === "publish" ? "Publishing..." : "Publish"}
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

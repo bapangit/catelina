@@ -12,6 +12,9 @@ interface Product {
   prevPrice: string;
   image1: string;
   image2: string;
+  image3: string;
+  image4: string;
+  image5: string;
 }
 
 const PAGE_SIZE = 8;
@@ -125,6 +128,9 @@ const Products = () => {
                 <ProductImageSlider
                   image1={product.image1}
                   image2={product.image2}
+                  image3={product.image3}
+                  image4={product.image4}
+                  image5={product.image5}
                   alt={product.title || "Product image"}
                 />
 

@@ -17,6 +17,9 @@ type ProductRecord = {
   description?: string;
   image1?: string;
   image2?: string;
+  image3?: string;
+  image4?: string;
+  image5?: string;
   fabric?: string;
   pattern?: string;
   occasion?: string;
@@ -80,6 +83,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ProductImageSlider
             image1={product.image1}
             image2={product.image2}
+            image3={product.image3}
+            image4={product.image4}
+            image5={product.image5}
             alt={product.title || "Product image"}
             height="500px"
             borderRadius="12px"

@@ -7,6 +7,9 @@ import { useState } from "react";
 type ProductImageSliderProps = {
   image1?: string;
   image2?: string;
+  image3?: string;
+  image4?: string;
+  image5?: string;
   alt: string;
   height?: string;
   borderRadius?: string;
@@ -18,11 +21,16 @@ const isValidImage = (value?: string) =>
 export default function ProductImageSlider({
   image1,
   image2,
+  image3,
+  image4,
+  image5,
   alt,
   height = "280px",
   borderRadius = "10px",
 }: ProductImageSliderProps) {
-  const images = [image1, image2].filter(isValidImage) as string[];
+  const images = [image1, image2, image3, image4, image5].filter(
+    isValidImage
+  ) as string[];
   const [activeIndex, setActiveIndex] = useState(0);
   const currentIndex = activeIndex >= images.length ? 0 : activeIndex;
 
