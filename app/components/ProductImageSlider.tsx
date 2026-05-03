@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import type { MouseEvent } from "react";
-import { useState } from "react";
+import type { MouseEvent, TouchEvent } from "react";
+import { useRef, useState } from "react";
 
 type ProductImageSliderProps = {
   image1?: string;
@@ -32,6 +32,7 @@ export default function ProductImageSlider({
     isValidImage
   ) as string[];
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const currentIndex = activeIndex >= images.length ? 0 : activeIndex;
 
   if (images.length === 0) {
@@ -70,9 +71,48 @@ export default function ProductImageSlider({
     action();
   };
 
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+
+    touchStart.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    if (!touchStart.current || images.length <= 1) {
+      touchStart.current = null;
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+    const diffX = touch.clientX - touchStart.current.x;
+    const diffY = touch.clientY - touchStart.current.y;
+    const minimumSwipeDistance = 50;
+
+    touchStart.current = null;
+
+    if (
+      Math.abs(diffX) < minimumSwipeDistance ||
+      Math.abs(diffX) <= Math.abs(diffY)
+    ) {
+      return;
+    }
+
+    if (diffX > 0) {
+      goToPrevious();
+      return;
+    }
+
+    goToNext();
+  };
+
   return (
     <div style={{ marginBottom: "12px" }}>
       <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         style={{
           position: "relative",
           width: "100%",
@@ -80,6 +120,7 @@ export default function ProductImageSlider({
           overflow: "hidden",
           borderRadius,
           background: "#f8fafc",
+          touchAction: "pan-y",
         }}
       >
         <Image

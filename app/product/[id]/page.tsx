@@ -87,7 +87,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             image4={product.image4}
             image5={product.image5}
             alt={product.title || "Product image"}
-            height="500px"
+            height="720px"
             borderRadius="12px"
           />
         </div>
