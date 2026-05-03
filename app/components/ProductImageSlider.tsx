@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { MouseEvent, TouchEvent } from "react";
 import { useRef, useState } from "react";
+import styles from "./ProductImageSlider.module.css";
 
 type ProductImageSliderProps = {
   image1?: string;
@@ -32,6 +33,9 @@ export default function ProductImageSlider({
     isValidImage
   ) as string[];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const sliderRef = useRef<HTMLDivElement | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const currentIndex = activeIndex >= images.length ? 0 : activeIndex;
 
@@ -54,12 +58,17 @@ export default function ProductImageSlider({
     );
   }
 
+  const goToSlide = (index: number) => {
+    setActiveIndex(((index % images.length) + images.length) % images.length);
+    setDragOffset(0);
+  };
+
   const goToPrevious = () => {
-    setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    goToSlide(currentIndex - 1);
   };
 
   const goToNext = () => {
-    setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    goToSlide(currentIndex + 1);
   };
 
   const handleSliderControlClick = (
@@ -72,26 +81,52 @@ export default function ProductImageSlider({
   };
 
   const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (images.length <= 1) {
+      return;
+    }
+
     const touch = event.touches[0];
 
     touchStart.current = {
       x: touch.clientX,
       y: touch.clientY,
     };
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    if (!touchStart.current || images.length <= 1) {
+      return;
+    }
+
+    const touch = event.touches[0];
+    const diffX = touch.clientX - touchStart.current.x;
+    const diffY = touch.clientY - touchStart.current.y;
+
+    if (Math.abs(diffY) > Math.abs(diffX)) {
+      return;
+    }
+
+    setDragOffset(diffX);
   };
 
   const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     if (!touchStart.current || images.length <= 1) {
       touchStart.current = null;
+      setIsDragging(false);
+      setDragOffset(0);
       return;
     }
 
     const touch = event.changedTouches[0];
     const diffX = touch.clientX - touchStart.current.x;
     const diffY = touch.clientY - touchStart.current.y;
-    const minimumSwipeDistance = 50;
+    const sliderWidth = sliderRef.current?.clientWidth || 0;
+    const minimumSwipeDistance = Math.min(80, sliderWidth * 0.22);
 
     touchStart.current = null;
+    setIsDragging(false);
+    setDragOffset(0);
 
     if (
       Math.abs(diffX) < minimumSwipeDistance ||
@@ -109,29 +144,45 @@ export default function ProductImageSlider({
   };
 
   return (
-    <div style={{ width: "100%", height, marginBottom: "12px" }}>
+    <div className={styles.root} style={{ width: "100%", height }}>
       <div
+        ref={sliderRef}
+        className={styles.viewport}
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={() => {
+          touchStart.current = null;
+          setIsDragging(false);
+          setDragOffset(0);
+        }}
         style={{
-          position: "relative",
-          width: "100%",
           height: "100%",
-          overflow: "hidden",
           borderRadius,
-          background: "#f8fafc",
-          touchAction: "pan-y",
         }}
       >
-        <Image
-          src={images[currentIndex]}
-          alt={`${alt} ${currentIndex + 1}`}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
+        <div
+          className={styles.track}
           style={{
-            objectFit: "cover",
+            transform: `translateX(calc(${-currentIndex * 100}% + ${dragOffset}px))`,
+            transition: isDragging ? "none" : undefined,
           }}
-        />
+        >
+          {images.map((image, index) => (
+            <div className={styles.slide} key={`${image}-${index}`}>
+              <Image
+                src={image}
+                alt={`${alt} ${index + 1}`}
+                fill
+                sizes="(max-width: 768px) 360px, 540px"
+                priority={index === 0}
+                style={{
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          ))}
+        </div>
 
         {images.length > 1 && (
           <>
@@ -139,7 +190,7 @@ export default function ProductImageSlider({
               type="button"
               onClick={(event) => handleSliderControlClick(event, goToPrevious)}
               aria-label="Show previous product image"
-              style={navButtonStyle("left")}
+              className={`${styles.navButton} ${styles.navButtonLeft}`}
             >
               {"<"}
             </button>
@@ -147,7 +198,7 @@ export default function ProductImageSlider({
               type="button"
               onClick={(event) => handleSliderControlClick(event, goToNext)}
               aria-label="Show next product image"
-              style={navButtonStyle("right")}
+              className={`${styles.navButton} ${styles.navButtonRight}`}
             >
               {">"}
             </button>
@@ -156,32 +207,19 @@ export default function ProductImageSlider({
       </div>
 
       {images.length > 1 && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "8px",
-            marginTop: "10px",
-          }}
-        >
+        <div className={styles.dots}>
           {images.map((image, index) => (
             <button
               key={`${image}-${index}`}
               type="button"
               onClick={(event) =>
-                handleSliderControlClick(event, () => setActiveIndex(index))
+                handleSliderControlClick(event, () => goToSlide(index))
               }
               aria-label={`Show product image ${index + 1}`}
               aria-pressed={currentIndex === index}
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "999px",
-                border: "none",
-                padding: 0,
-                background: currentIndex === index ? "#0f172a" : "#cbd5e1",
-                cursor: "pointer",
-              }}
+              className={`${styles.dot} ${
+                currentIndex === index ? styles.dotActive : ""
+              }`}
             />
           ))}
         </div>
@@ -189,23 +227,3 @@ export default function ProductImageSlider({
     </div>
   );
 }
-
-const navButtonStyle = (side: "left" | "right") => ({
-  position: "absolute" as const,
-  top: "50%",
-  [side]: "12px",
-  transform: "translateY(-50%)",
-  width: "36px",
-  height: "36px",
-  borderRadius: "999px",
-  border: "none",
-  background: "rgba(15, 23, 42, 0.72)",
-  color: "#fff",
-  fontSize: "1.1rem",
-  fontWeight: 700,
-  lineHeight: 1,
-  cursor: "pointer",
-  display: "grid",
-  placeItems: "center",
-  zIndex: 1,
-});
