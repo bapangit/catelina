@@ -13,6 +13,35 @@
   background: var(--background);
 }
 
+.hamburger_container {
+  display: none;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+}
+
+.hamburger_button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.hamburger_button:hover {
+  color: #0066cc;
+}
+
+.logo_link {
+  text-decoration: none;
+}
+
 .search{
   position: absolute;
   top: 50%;
@@ -32,11 +61,13 @@
 }
 
 .p {
-  font-size: xx-large;
+  font-size: 1.5rem;
   position: absolute;
   left: 60px;
   top: 50%;
   transform: translateY(-50%);
+  margin: 0;
+  padding: 0;
 }
 
 .nav {
@@ -51,11 +82,14 @@
   display: flex;
   justify-content: center;
   gap: 20px;
-  font-size: larger;
+  font-size: 1rem;
   list-style: none;
-    li{
-        cursor: pointer;
-    }
+  margin: 0;
+  padding: 0;
+}
+
+.ol li {
+  cursor: pointer;
 }
 
 .header_secondary_nav{
@@ -63,13 +97,102 @@
   right: 50px;
   top: 50%;
   transform: translateY(-50%);
-  ul{
-    display: flex;
-    gap: 15px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+}
+
+.header_secondary_nav ul{
+  display: flex;
+  gap: 15px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.mobile_menu_modal {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1002;
+  min-width: 280px;
+  animation: fadeInSlideDown 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.mobile_menu_nav {
+  padding: 16px 0;
+}
+
+.mobile_menu_ol {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile_menu_ol li {
+  padding: 12px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.mobile_menu_ol li:last-child {
+  border-bottom: none;
+}
+
+.mobile_menu_ol li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.mobile_menu_ol li:hover {
+  background-color: #f8f9fa;
 }
 
 .hero_section{
@@ -123,5 +246,82 @@
 .search_panel input:focus {
   border-color: #0066cc;
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .hamburger_container {
+    display: block;
+  }
+
+  .search {
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .logo_link {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    display: flex;
+    align-items: center;
+  }
+
+  .p {
+    position: static;
+    transform: none;
+    left: auto;
+    top: auto;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .header_secondary_nav {
+    position: absolute;
+    transform: translateY(-50%);
+    right: 10px;
+    top: 50%;
+    display: flex;
+  }
+
+  .header_secondary_nav ul {
+    gap: 10px;
+  }
+
+  .mobile_menu_modal {
+    min-width: calc(100vw - 40px);
+    max-width: 400px;
+  }
+
+  .ol {
+    font-size: 0.9rem;
+  }
+
+  .mobile_menu_ol li {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .p {
+    font-size: 1rem;
+  }
+
+  .header_secondary_nav ul {
+    gap: 8px;
+  }
+
+  .mobile_menu_modal {
+    min-width: calc(100vw - 20px);
+    max-width: 100%;
+  }
 }
 
