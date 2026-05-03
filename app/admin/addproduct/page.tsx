@@ -22,6 +22,8 @@ type AddProductPageProps = {
   searchParams: Promise<{ id?: string | string[] }>;
 };
 
+type ImageIndex = 1 | 2;
+
 const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -63,6 +65,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [preview2, setPreview2] = useState("");
   const [imageUrl2, setImageUrl2] = useState("");
   const [uploading2, setUploading2] = useState(false);
+  const [deletingImage, setDeletingImage] = useState<ImageIndex | null>(null);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
 
   useEffect(() => {
@@ -113,19 +116,49 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
     initializeProduct();
   }, [draftId]);
 
+  const deleteCloudinaryImage = async (
+    url: string,
+    index: ImageIndex,
+    clearProductImage = false,
+  ) => {
+    if (!url) return;
+
+    const response = await fetch("/api/products/delete-image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId,
+        imageField: `image${index}`,
+        imageUrl: url,
+        clearProductImage,
+      }),
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Failed to delete image");
+    }
+  };
+
   /* HANDLE IMAGE CHANGE | SAVE TO DRAFT */
   const handleImageChange = async (
     e: ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: ImageIndex,
   ) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
 
+    const previousImageUrl = index === 1 ? imageUrl : imageUrl2;
+    const previousPreviewUrl = index === 1 ? preview : preview2;
+    const nextPreviewUrl = URL.createObjectURL(file);
+
     if (index == 1) {
-      setPreview(URL.createObjectURL(file));
+      setPreview(nextPreviewUrl);
     } else if (index == 2) {
-      setPreview2(URL.createObjectURL(file));
+      setPreview2(nextPreviewUrl);
     }
 
     try {
@@ -154,14 +187,8 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       const data = await res.json();
       console.log("upload data", data);
       if (data.secure_url) {
-        if (index == 1) {
-          setImageUrl(data.secure_url);
-        } else if (index == 2) {
-          setImageUrl2(data.secure_url);
-        }
-
         // optional save to db instantly
-        await fetch(`/api/products/create-product/${productId}`, {
+        const saveImageResponse = await fetch(`/api/products/create-product/${productId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -169,16 +196,50 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           body: JSON.stringify({
             [`image${index}`]: data.secure_url,
           }),
-        })
-          .then(() => {
-            "image url saved";
-          })
-          .catch((e) => {
-            console.log("e", e);
-          });
+        });
+        const saveImageData = await saveImageResponse.json();
+
+        if (!saveImageResponse.ok || !saveImageData.success) {
+          try {
+            await deleteCloudinaryImage(data.secure_url, index);
+          } catch (deleteError) {
+            console.log(deleteError);
+          }
+
+          throw new Error(saveImageData.message || "Failed to save image");
+        }
+
+        if (index == 1) {
+          setImageUrl(data.secure_url);
+        } else if (index == 2) {
+          setImageUrl2(data.secure_url);
+        }
+
+        if (previousImageUrl && previousImageUrl !== data.secure_url) {
+          try {
+            await deleteCloudinaryImage(previousImageUrl, index);
+          } catch (deleteError) {
+            console.log(deleteError);
+            alert(
+              deleteError instanceof Error
+                ? `New image saved, but old image was not deleted: ${deleteError.message}`
+                : "New image saved, but old image was not deleted",
+            );
+          }
+        }
       }
     } catch (error) {
       console.log(error);
+
+      if (index == 1) {
+        setImageUrl(previousImageUrl);
+        setPreview(previousPreviewUrl);
+      } else if (index == 2) {
+        setImageUrl2(previousImageUrl);
+        setPreview2(previousPreviewUrl);
+      }
+
+      alert(error instanceof Error ? error.message : "Failed to upload image");
     } finally {
       if (index == 1) {
         setUploading(false);
@@ -235,6 +296,30 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       console.log(error);
     } finally {
       setSaving(null);
+    }
+  };
+
+  const deleteImage = async (index: ImageIndex) => {
+    const url = index === 1 ? imageUrl : imageUrl2;
+
+    if (!url) return;
+
+    try {
+      setDeletingImage(index);
+      await deleteCloudinaryImage(url, index, true);
+
+      if (index === 1) {
+        setImageUrl("");
+        setPreview("");
+      } else {
+        setImageUrl2("");
+        setPreview2("");
+      }
+    } catch (error) {
+      console.log(error);
+      alert(error instanceof Error ? error.message : "Failed to delete image");
+    } finally {
+      setDeletingImage(null);
     }
   };
 
@@ -445,53 +530,88 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
         </div>
       </div>
 
-      <div className={styles.formGroup}>
-        <label>Product Image1</label>
+      <div className={styles.imageSection}>
+        <h3 className={styles.sectionTitle}>Product Images</h3>
+        <div className={styles.imageGrid}>
+          <div className={styles.imageCard}>
+            <div className={styles.formGroup}>
+              <label>Product Image 1</label>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            handleImageChange(e, 1);
-          }}
-        />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  handleImageChange(e, 1);
+                }}
+              />
+            </div>
+            {uploading && <p className={styles.uploadStatus}>Uploading image...</p>}
+            {preview && (
+              <div className={styles.previewBox}>
+                <img src={preview} alt="Preview" className={styles.previewImage} />
+              </div>
+            )}
+            {imageUrl && (
+              <div className={styles.uploadSuccess}>
+                <p>Uploaded Successfully</p>
+                <p>{imageUrl}</p>
+              </div>
+            )}
+
+            {imageUrl && (
+              <button
+                type="button"
+                className={styles.deleteButton}
+                disabled={deletingImage === 1 || uploading}
+                onClick={() => {
+                  deleteImage(1);
+                }}
+              >
+                {deletingImage === 1 ? "Deleting..." : "Delete"}
+              </button>
+            )}
+          </div>
+
+          <div className={styles.imageCard}>
+            <div className={styles.formGroup}>
+              <label>Product Image 2</label>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  handleImageChange(e, 2);
+                }}
+              />
+            </div>
+            {uploading2 && <p className={styles.uploadStatus}>Uploading image...</p>}
+            {preview2 && (
+              <div className={styles.previewBox}>
+                <img src={preview2} alt="Preview" className={styles.previewImage} />
+              </div>
+            )}
+            {imageUrl2 && (
+              <div className={styles.uploadSuccess}>
+                <p>Uploaded Successfully</p>
+                <p>{imageUrl2}</p>
+              </div>
+            )}
+
+            {imageUrl2 && (
+              <button
+                type="button"
+                className={styles.deleteButton}
+                disabled={deletingImage === 2 || uploading2}
+                onClick={() => {
+                  deleteImage(2);
+                }}
+              >
+                {deletingImage === 2 ? "Deleting..." : "Delete"}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
-      {uploading && <p>Uploading image...</p>}
-      {preview && (
-        <div className={styles.previewBox}>
-          <img src={preview} alt="Preview" className={styles.previewImage} />
-        </div>
-      )}
-      {imageUrl && (
-        <div>
-          <p>Uploaded Successfully</p>
-          <p>{imageUrl}</p>
-        </div>
-      )}
-
-      <div className={styles.formGroup}>
-        <label>Product Image2</label>
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            handleImageChange(e, 2);
-          }}
-        />
-      </div>
-      {uploading2 && <p>Uploading image...</p>}
-      {preview2 && (
-        <div className={styles.previewBox}>
-          <img src={preview2} alt="Preview" className={styles.previewImage} />
-        </div>
-      )}
-      {imageUrl2 && (
-        <div>
-          <p>Uploaded Successfully</p>
-          <p>{imageUrl2}</p>
-        </div>
-      )}
       <div className={styles.buttonRow}>
         <button
           type="button"
