@@ -109,14 +109,14 @@ export default function ProductImageSlider({
   };
 
   return (
-    <div style={{ marginBottom: "12px" }}>
+    <div style={{ width: "100%", height, marginBottom: "12px" }}>
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{
           position: "relative",
           width: "100%",
-          height,
+          height: "100%",
           overflow: "hidden",
           borderRadius,
           background: "#f8fafc",
