@@ -7,6 +7,7 @@ import Link from "next/link";
 
 const ProfileComponent = ({ styles }) => {
   const { data: session } = useSession();
+  const userName = session?.user?.name || session?.user?.email || "User";
 
   const [showPanel, setShowPanel] = useState(false);
 
@@ -26,10 +27,8 @@ const ProfileComponent = ({ styles }) => {
     };
   }, []);
 
-  
-
   return (
-    <div ref={wrapperRef} style={{ position: "relative" }}>
+    <div ref={wrapperRef} className={styles.profile_component}>
       <CgProfile
         onClick={() => setShowPanel((prev) => !prev)}
         color={session ? "green" : "red"}
@@ -40,56 +39,45 @@ const ProfileComponent = ({ styles }) => {
         className={styles.profile_panel}
         style={{ display: showPanel ? "block" : "none" }}
       >
-        {/* Your panel content */}
-        <h1><b>Account</b></h1>
-        <div style={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
+        <div className={styles.profile_card}>
+          <div className={styles.profile_avatar}>
+            {session ? userName.charAt(0).toUpperCase() : "?"}
+          </div>
+          <div className={styles.profile_meta}>
+            <span className={styles.profile_label}>Account</span>
+            <h2 className={styles.profile_name}>
+              {session ? userName : "Guest user"}
+            </h2>
+          </div>
 
-            {session ? (
-          <>
-          <button
-          className={`${styles.status_button} ${styles.view_profile}`}
-            onClick={() => {}}
-          >
-            View Profile
-          </button>
+          {session ? (
+            <div className={styles.profile_actions}>
+              <Link
+                href="/address"
+                className={styles.profile_action_button}
+                onClick={() => setShowPanel(false)}
+              >
+                Addresses
+              </Link>
 
-          <Link
-            href="/address"
-            className={`${styles.status_button} ${styles.view_profile}`}
-            onClick={() => setShowPanel(false)}
-          >
-            Address
-          </Link>
-          
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className={`${styles.authButton} ${styles.logoutButton}`}
-          >
-            LOGOUT
-          </button>
-          </>
-        ) : (
-          <>
-
-          <button
-          className={styles.status_button}
-            onClick={()=>{}}
-          >
-            Not Signed
-          </button>
-          
-          <button
-            onClick={() => signIn("google")}
-            className={`${styles.authButton} ${styles.loginButton}`}
-          >
-            LOGIN
-          </button>
-          </>
-        )}
-
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className={`${styles.profile_action_button} ${styles.profile_logout_button}`}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => signIn("google")}
+              className={`${styles.profile_action_button} ${styles.profile_login_button}`}
+            >
+              Login
+            </button>
+          )}
         </div>
-        
-
       </div>
     </div>
   );
