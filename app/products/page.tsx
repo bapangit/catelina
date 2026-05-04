@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ProductImageSlider from "../components/ProductImageSlider";
+import styles from "./page.module.css";
 
 interface Product {
   _id: string;
@@ -18,6 +19,23 @@ interface Product {
 }
 
 const PAGE_SIZE = 8;
+
+const parsePrice = (value: string) => {
+  const price = Number(value.replace(/[^0-9.]/g, ""));
+
+  return Number.isFinite(price) ? price : 0;
+};
+
+const getDiscountPercentage = (prevPrice: string, price: string) => {
+  const previous = parsePrice(prevPrice);
+  const current = parsePrice(price);
+
+  if (!previous || !current || current >= previous) {
+    return null;
+  }
+
+  return Math.round(((previous - current) / previous) * 100);
+};
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -99,14 +117,17 @@ const Products = () => {
       >
         {products.map((product, index) => {
           const isLastItem = index === products.length - 1;
+          const discountPercentage = getDiscountPercentage(
+            product.prevPrice,
+            product.price
+          );
 
           return (
             <div
               key={product._id}
               ref={isLastItem ? lastProductRef : null}
+              className={styles.productCard}
               style={{
-                border: "1px solid #ddd",
-                borderRadius: "10px",
                 padding: "15px",
                 minHeight: "320px",
                 display: "flex",
@@ -132,6 +153,9 @@ const Products = () => {
                   image4={product.image4}
                   image5={product.image5}
                   alt={product.title || "Product image"}
+                  height="auto"
+                  aspectRatio="3 / 4"
+                  borderRadius="0"
                 />
 
                 <div>
@@ -145,6 +169,11 @@ const Products = () => {
                     <p style={{ fontSize: "1rem", display: "inline" }}>
                       INR {product.price || "0"}
                     </p>
+                    {discountPercentage !== null && (
+                      <span style={{ color: "#16a34a", fontSize: "0.9rem", marginLeft: "8px", fontWeight: 600 }}>
+                        ({discountPercentage}% off)
+                      </span>
+                    )}
                   </div>
                   <p style={{ fontSize: "0.9rem", color: "#666", margin: "8px 0" }}>
                     {product.description || "No description available"}

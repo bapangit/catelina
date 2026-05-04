@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { MouseEvent, TouchEvent } from "react";
 import { useRef, useState } from "react";
+import { GrNext } from "react-icons/gr";
 import styles from "./ProductImageSlider.module.css";
 
 type ProductImageSliderProps = {
@@ -14,6 +15,7 @@ type ProductImageSliderProps = {
   alt: string;
   height?: string;
   borderRadius?: string;
+  aspectRatio?: string;
 };
 
 const isValidImage = (value?: string) =>
@@ -28,6 +30,7 @@ export default function ProductImageSlider({
   alt,
   height = "280px",
   borderRadius = "10px",
+  aspectRatio,
 }: ProductImageSliderProps) {
   const images = [image1, image2, image3, image4, image5].filter(
     isValidImage
@@ -45,6 +48,7 @@ export default function ProductImageSlider({
         style={{
           width: "100%",
           height,
+          aspectRatio,
           display: "grid",
           placeItems: "center",
           background: "#f3f4f6",
@@ -144,7 +148,7 @@ export default function ProductImageSlider({
   };
 
   return (
-    <div className={styles.root} style={{ width: "100%", height }}>
+    <div className={styles.root} style={{ width: "100%", height, aspectRatio }}>
       <div
         ref={sliderRef}
         className={styles.viewport}
@@ -192,7 +196,7 @@ export default function ProductImageSlider({
               aria-label="Show previous product image"
               className={`${styles.navButton} ${styles.navButtonLeft}`}
             >
-              {"<"}
+              <GrNext aria-hidden="true" className={styles.navIconPrevious} />
             </button>
             <button
               type="button"
@@ -200,7 +204,7 @@ export default function ProductImageSlider({
               aria-label="Show next product image"
               className={`${styles.navButton} ${styles.navButtonRight}`}
             >
-              {">"}
+              <GrNext aria-hidden="true" />
             </button>
           </>
         )}
