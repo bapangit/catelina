@@ -3,6 +3,7 @@ import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import mongoose from "mongoose";
 import { notFound } from "next/navigation";
+import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
 
 type ProductPageProps = {
@@ -109,14 +110,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
             <span className={styles.taxText}>MRP inclusive of all taxes</span>
           </div>
-          <div className={styles.optionSection}>
-            <div className={styles.optionTitle}>Select Size</div>
-            <div className={styles.sizeButtons}>
-              <button type="button" className={styles.sizeButton}>S</button>
-              <button type="button" className={styles.sizeButton}>M</button>
-              <button type="button" className={styles.sizeButton}>L</button>
-            </div>
-          </div>
+          <OrderControls productId={product._id} />
           {hasProductInfo ? (
             <section className={styles.infoSection}>
               <h2 className={styles.infoHeading}>Product Information</h2>
