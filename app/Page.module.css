@@ -340,6 +340,29 @@
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
+.search_form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.search_form button {
+  border: 1px solid #0f766e;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0 14px;
+}
+
+.search_form button:hover {
+  background: #115e59;
+  border-color: #115e59;
+}
+
 .search_suggestions {
   display: flex;
   flex-direction: column;

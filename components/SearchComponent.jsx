@@ -2,9 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
 
 const SearchComponent = ({ styles }) => {
+  const router = useRouter();
   const [show, setShow] = useState(false);
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState([]);
@@ -15,6 +17,19 @@ const SearchComponent = ({ styles }) => {
 
   const toggleSearchPanel = () => setShow((prev) => !prev);
   const closeSearchPanel = () => setShow(false);
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      inputRef.current?.focus();
+      return;
+    }
+
+    closeSearchPanel();
+    router.push(`/products?search=${encodeURIComponent(trimmedQuery)}`);
+  };
 
   const searchText = query.trim().toLowerCase();
   const suggestions = products
@@ -98,13 +113,16 @@ const SearchComponent = ({ styles }) => {
 
       {show && (
         <div className={styles.search_panel}>
-          <input
-            ref={inputRef}
-            type="search"
-            value={query}
-            placeholder="Search products"
-            onChange={(event) => setQuery(event.target.value)}
-          />
+          <form className={styles.search_form} onSubmit={handleSearchSubmit}>
+            <input
+              ref={inputRef}
+              type="search"
+              value={query}
+              placeholder="Search products"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <button type="submit">Search</button>
+          </form>
 
           <div className={styles.search_suggestions}>
             {loading && (
