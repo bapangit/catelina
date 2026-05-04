@@ -8,6 +8,7 @@ import {
   careInstructionOptions,
   closureOptions,
   dressShapeOptions,
+  dressCategories,
   dressesSubcategoryOptions,
   fabricOptions,
   fitOptions,
@@ -52,6 +53,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [prevPrice, setPrevPrice] = useState("");
+  const [category, setCategory] = useState("");
   const [fabric, setFabric] = useState("");
   const [pattern, setPattern] = useState("");
   const [occasion, setOccasion] = useState("");
@@ -95,6 +97,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             setDescription(data.product.description || "");
             setPrice(data.product.price || "");
             setPrevPrice(data.product.prevPrice || "");
+            setCategory(data.product.category || "");
             setFabric(data.product.fabric || "");
             setPattern(data.product.pattern || "");
             setOccasion(data.product.occasion || "");
@@ -360,6 +363,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
             description:description,
             price,
             prevPrice,
+            category,
             fabric,
             pattern,
             occasion,
@@ -477,6 +481,19 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           value={prevPrice}
           onChange={(e) => setPrevPrice(e.target.value)}
         />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Category</label>
+
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option value="">Select category</option>
+          {dressCategories.map((option) => (
+            <option key={option.name} value={option.name}>
+              {option.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.formGroup}>

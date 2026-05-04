@@ -11,6 +11,7 @@ export async function POST() {
       description: "",
       price: "",
       prevPrice: "",
+      category: "",
       image1: "",
       image2: "",
       image3: "",

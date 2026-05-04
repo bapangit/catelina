@@ -14,6 +14,7 @@ type ProductRecord = {
   title?: string;
   price?: string;
   prevPrice?: string;
+  category?: string;
   description?: string;
   image1?: string;
   image2?: string;
@@ -61,6 +62,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const productDetails = [
+    { label: "Category", value: product.category },
     { label: "Material", value: product.fabric },
     { label: "Pattern", value: product.pattern },
     { label: "Occasion", value: product.occasion },
