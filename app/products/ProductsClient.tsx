@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { IoCloseOutline, IoFilterOutline } from "react-icons/io5";
 import ProductImageSlider from "../components/ProductImageSlider";
 import { dressCategories } from "@/config/productInfoOpt";
 import styles from "./page.module.css";
@@ -52,6 +53,7 @@ const ProductsClient = () => {
   const [category, setCategory] = useState("");
   const [searchText, setSearchText] = useState("");
   const [debouncedSearchText, setDebouncedSearchText] = useState("");
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
 
   const loadProducts = useCallback(async (
@@ -141,39 +143,112 @@ const ProductsClient = () => {
     loadProducts(page, category, debouncedSearchText);
   }, [category, debouncedSearchText, loadProducts, page]);
 
+  useEffect(() => {
+    if (!isFilterModalOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsFilterModalOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [isFilterModalOpen]);
+
+  const renderFilters = (idPrefix: string) => (
+    <>
+      <div className={styles.filterGroup}>
+        <label htmlFor={`${idPrefix}-product-search`}>Search</label>
+        <input
+          id={`${idPrefix}-product-search`}
+          type="search"
+          value={searchText}
+          placeholder="Search products"
+          onChange={(event) => setSearchText(event.target.value)}
+        />
+      </div>
+
+      <div className={styles.filterGroup}>
+        <label htmlFor={`${idPrefix}-category-filter`}>Category</label>
+        <select
+          id={`${idPrefix}-category-filter`}
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+        >
+          <option value="">All categories</option>
+          {dressCategories.map((option) => (
+            <option key={option.name} value={option.name}>
+              {option.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+
   return (
     <div className={styles.productsPage}>
       <aside className={styles.filterSection}>
         <h2>Filters</h2>
-        <div className={styles.filterGroup}>
-          <label htmlFor="product-search">Search</label>
-          <input
-            id="product-search"
-            type="search"
-            value={searchText}
-            placeholder="Search products"
-            onChange={(event) => setSearchText(event.target.value)}
-          />
-        </div>
-
-        <div className={styles.filterGroup}>
-          <label htmlFor="category-filter">Category</label>
-          <select
-            id="category-filter"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-          >
-            <option value="">All categories</option>
-            {dressCategories.map((option) => (
-              <option key={option.name} value={option.name}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {renderFilters("desktop")}
       </aside>
 
       <section className={styles.productsContent}>
+        <button
+          type="button"
+          className={styles.mobileFilterButton}
+          onClick={() => setIsFilterModalOpen(true)}
+        >
+          <IoFilterOutline aria-hidden="true" />
+          <span>Filters</span>
+        </button>
+
+        {isFilterModalOpen && (
+          <div
+            className={styles.filterModalOverlay}
+            role="presentation"
+            onClick={() => setIsFilterModalOpen(false)}
+          >
+            <div
+              className={styles.filterModal}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mobile-filters-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className={styles.filterModalHeader}>
+                <h2 id="mobile-filters-title">Filters</h2>
+                <button
+                  type="button"
+                  className={styles.filterModalClose}
+                  aria-label="Close filters"
+                  onClick={() => setIsFilterModalOpen(false)}
+                >
+                  <IoCloseOutline aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className={styles.filterModalBody}>
+                {renderFilters("mobile")}
+              </div>
+
+              <button
+                type="button"
+                className={styles.filterApplyButton}
+                onClick={() => setIsFilterModalOpen(false)}
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        )}
+
         {error && <p className={styles.errorText}>{error}</p>}
 
         <div className={styles.productsGrid}>
