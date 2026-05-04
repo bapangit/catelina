@@ -127,3 +127,32 @@ export const careInstructionOptions = [
   "Machine Wash / Dry Cleaning",
   "Gentle Wash",
 ];
+
+
+export const dressCategories = [
+  {
+    name: "Sarees",
+    image: "/category/saree.jpg",
+    description: "Classic drapes for festive, wedding, and everyday elegance.",
+  },
+  {
+    name: "Kurtis",
+    image: "/category/kurti.jpg",
+    description: "Easy ethnic wear styles for office, outings, and daily comfort.",
+  },
+  {
+    name: "Salwar Suits",
+    image: "/category/saree.jpg",
+    description: "Coordinated sets with graceful silhouettes for polished traditional dressing.",
+  },
+  {
+    name: "Lehengas",
+    image: "/category/kurti.jpg",
+    description: "Statement occasion outfits for celebrations and special events.",
+  },
+  {
+    name: "Maxi",
+    image: "/category/kurti.jpg",
+    description: "Long flowing dresses made for relaxed days, vacations, and evening plans.",
+  }
+];
