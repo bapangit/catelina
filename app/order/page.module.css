@@ -24,11 +24,18 @@
 }
 
 .productPanel,
+.addressPanel,
 .pricePanel {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #ffffff;
   padding: 20px;
+}
+
+.detailsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .productPanel {
@@ -61,6 +68,68 @@
   color: #4b5563;
   font-size: 1rem;
   font-weight: 600;
+}
+
+.addressPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.panelHeader h2,
+.pricePanel h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.changeLink,
+.primaryLink {
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.changeLink {
+  color: #2563eb;
+}
+
+.primaryLink {
+  display: inline-flex;
+  align-items: center;
+  background: #111827;
+  color: #ffffff;
+  padding: 10px 14px;
+}
+
+.addressDetails h3 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.addressDetails p,
+.emptyAddress p {
+  margin: 0 0 6px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.emptyAddress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .pricePanel {

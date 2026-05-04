@@ -3,9 +3,16 @@ import Address from "@/config/models/address";
 import User from "@/config/models/user";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import styles from "./page.module.css";
 import mongoose from "mongoose";
+
+type AddressPageProps = {
+  searchParams: Promise<{
+    returnTo?: string;
+  }>;
+};
 
 type AddressRecord = {
   _id: string;
@@ -28,6 +35,14 @@ const MAX_ADDRESSES = 5;
 function readRequiredField(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function getSafeReturnTo(value: string) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "";
+  }
+
+  return value;
 }
 
 function getSavedAddressIds(user: UserAddressFields) {
@@ -59,6 +74,7 @@ async function addAddress(formData: FormData) {
   "use server";
 
   const user = await getCurrentUser();
+  const returnTo = getSafeReturnTo(readRequiredField(formData, "returnTo"));
 
   if (!user) {
     throw new Error("You must be signed in to add an address.");
@@ -87,6 +103,11 @@ async function addAddress(formData: FormData) {
   await user.save();
 
   revalidatePath("/address");
+
+  if (returnTo) {
+    revalidatePath("/order");
+    redirect(returnTo);
+  }
 }
 
 async function selectAddress(formData: FormData) {
@@ -94,6 +115,7 @@ async function selectAddress(formData: FormData) {
 
   const user = await getCurrentUser();
   const addressId = readRequiredField(formData, "addressId");
+  const returnTo = getSafeReturnTo(readRequiredField(formData, "returnTo"));
 
   if (!user) {
     throw new Error("You must be signed in to select an address.");
@@ -123,9 +145,16 @@ async function selectAddress(formData: FormData) {
   await user.save();
 
   revalidatePath("/address");
+
+  if (returnTo) {
+    revalidatePath("/order");
+    redirect(returnTo);
+  }
 }
 
-export default async function AddressPage() {
+export default async function AddressPage({ searchParams }: AddressPageProps) {
+  const { returnTo: rawReturnTo } = await searchParams;
+  const returnTo = getSafeReturnTo(rawReturnTo || "");
   const user = await getCurrentUser();
 
   if (!user) {
@@ -168,6 +197,7 @@ export default async function AddressPage() {
         <div className={styles.contentGrid}>
           <form action={addAddress} className={styles.form}>
             <h2 className={styles.sectionTitle}>Add Address</h2>
+            <input name="returnTo" type="hidden" value={returnTo} />
             {!canAddAddress ? (
               <p className={styles.limitText}>You have saved 5 addresses.</p>
             ) : null}
@@ -239,6 +269,7 @@ export default async function AddressPage() {
                       <p>Phone: {address.ph}</p>
                       <form action={selectAddress}>
                         <input name="addressId" type="hidden" value={addressId} />
+                        <input name="returnTo" type="hidden" value={returnTo} />
                         <button
                           className={styles.secondaryButton}
                           disabled={isSelected}
