@@ -33,6 +33,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const imageInputRef3 = useRef<HTMLInputElement>(null);
   const imageInputRef4 = useRef<HTMLInputElement>(null);
   const imageInputRef5 = useRef<HTMLInputElement>(null);
+  const initializedProductKeyRef = useRef<string | null>(null);
   const resolvedSearchParams = use(searchParams);
   const draftId =
     typeof resolvedSearchParams.id === "string"
@@ -85,6 +86,15 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
 
   useEffect(() => {
+    if (status === "loading") return;
+    if (!session || session.user.role !== "admin") return;
+
+    const productKey = draftId ?? "new-product";
+
+    if (initializedProductKeyRef.current === productKey) return;
+
+    initializedProductKeyRef.current = productKey;
+
     const initializeProduct = async () => {
       try {
         if (draftId) {
@@ -132,12 +142,13 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
           setProductId(data.product._id);
         }
       } catch (error) {
+        initializedProductKeyRef.current = null;
         console.log(error);
       }
     };
 
     initializeProduct();
-  }, [draftId]);
+  }, [draftId, session, status]);
 
   const getImageInput = (index: ImageIndex) => {
     const inputs = {
@@ -292,7 +303,6 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
       );
 
       const data = await res.json();
-      console.log("upload data", data);
       if (data.secure_url) {
         // optional save to db instantly
         const saveImageResponse = await fetch(`/api/products/create-product/${productId}`, {
