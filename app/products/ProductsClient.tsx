@@ -278,24 +278,26 @@ const ProductsClient = () => {
                     borderRadius="0"
                   />
 
-                  <div>
-                    <h3>{product.title || "Untitled Product"}</h3>
+                  <div className={styles.productDetails}>
+                    <h3 className={styles.productBrand}>
+                      {product.category || "Product"}
+                    </h3>
+                    <p className={styles.productTitle}>
+                      {product.title || "Untitled Product"}
+                    </p>
                     <div className={styles.priceRow}>
+                      <p>Rs. {product.price || "0"}</p>
                       {product.prevPrice && (
                         <span className={styles.prevPrice}>
-                          INR {product.prevPrice}
+                          Rs. {product.prevPrice}
                         </span>
                       )}
-                      <p>INR {product.price || "0"}</p>
                       {discountPercentage !== null && (
                         <span className={styles.discountText}>
-                          ({discountPercentage}% off)
+                          ({discountPercentage}% OFF)
                         </span>
                       )}
                     </div>
-                    <p className={styles.productDescription}>
-                      {product.description || "No description available"}
-                    </p>
                   </div>
                 </Link>
               </div>

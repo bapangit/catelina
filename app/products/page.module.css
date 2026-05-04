@@ -151,16 +151,17 @@
 }
 
 .productCard {
-  border: 1px solid transparent;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 320px;
-  padding: 15px;
+  padding: 0;
 }
 
 .productCard:hover {
-  border-color: #ddd;
+  border-color: #d1d5db;
 }
 
 .productLink {
@@ -168,37 +169,53 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
   text-decoration: none;
 }
 
+.productDetails {
+  padding: 12px 12px 16px;
+}
+
+.productBrand {
+  color: #0f172a;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 4px;
+}
+
+.productTitle {
+  color: #334155;
+  font-size: 1rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
 .priceRow {
-  margin: 8px 0;
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
 }
 
 .priceRow p {
-  display: inline;
-  font-size: 1rem;
+  color: #0f172a;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 .prevPrice {
-  color: #999;
+  color: #6b7280;
   font-size: 0.9rem;
-  margin-right: 8px;
   text-decoration: line-through;
 }
 
 .discountText {
-  color: #16a34a;
+  color: #ff6b3d;
   font-size: 0.9rem;
-  font-weight: 600;
-  margin-left: 8px;
-}
-
-.productDescription {
-  color: #666;
-  font-size: 0.9rem;
-  margin: 8px 0;
+  font-weight: 700;
 }
 
 .errorText {
