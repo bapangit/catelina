@@ -9,10 +9,32 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page") || "1");
     const limit = Number(url.searchParams.get("limit") || "8");
+    const category = url.searchParams.get("category")?.trim();
+    const search = url.searchParams.get("search")?.trim();
     const safePage = Number.isInteger(page) && page > 0 ? page : 1;
     const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 8;
+    const filter: {
+      published: boolean;
+      category?: string;
+      $or?: Array<Record<string, RegExp>>;
+    } = { published: true };
 
-    const products = await Product.find({ published: true })
+    if (category) {
+      filter.category = category;
+    }
+
+    if (search) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const searchRegex = new RegExp(escapedSearch, "i");
+
+      filter.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+      ];
+    }
+
+    const products = await Product.find(filter)
       .sort({ _id: -1 })
       .skip((safePage - 1) * safeLimit)
       .limit(safeLimit)

@@ -2,9 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { IoSearchOutline } from "react-icons/io5";
-import { IoCloseOutline } from "react-icons/io5";
-
+import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
 
 const SearchComponent = ({ styles }) => {
   const [show, setShow] = useState(false);
@@ -16,6 +14,7 @@ const SearchComponent = ({ styles }) => {
   const inputRef = useRef(null);
 
   const toggleSearchPanel = () => setShow((prev) => !prev);
+  const closeSearchPanel = () => setShow(false);
 
   const searchText = query.trim().toLowerCase();
   const suggestions = products
@@ -90,7 +89,11 @@ const SearchComponent = ({ styles }) => {
   return (
     <div ref={wrapperRef}>
       <span className={styles.search} onClick={toggleSearchPanel}>
-        <IoSearchOutline className="icon" />
+        {show ? (
+          <IoCloseOutline className="icon" />
+        ) : (
+          <IoSearchOutline className="icon" />
+        )}
       </span>
 
       {show && (
@@ -117,7 +120,7 @@ const SearchComponent = ({ styles }) => {
                   key={product._id}
                   href={`/product/${product._id}`}
                   className={styles.search_suggestion}
-                  onClick={() => setShow(false)}
+                  onClick={closeSearchPanel}
                 >
                   <span
                     className={styles.search_suggestion_image}
