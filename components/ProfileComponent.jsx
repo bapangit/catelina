@@ -3,6 +3,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { CgProfile } from "react-icons/cg";
+import Link from "next/link";
 
 const ProfileComponent = ({ styles }) => {
   const { data: session } = useSession();
@@ -51,6 +52,14 @@ const ProfileComponent = ({ styles }) => {
           >
             View Profile
           </button>
+
+          <Link
+            href="/address"
+            className={`${styles.status_button} ${styles.view_profile}`}
+            onClick={() => setShowPanel(false)}
+          >
+            Address
+          </Link>
           
           <button
             onClick={() => signOut({ callbackUrl: "/" })}

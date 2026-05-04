@@ -7,7 +7,16 @@ const userSchema = new Schema(
       type: String,
       unique: true,
     },
-    role:{type:String,default:"user"} // Roles - "user", "admin"
+    addressIds: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: (addressIds: string[]) => addressIds.length <= 5,
+        message: "A user can save a maximum of 5 addresses.",
+      },
+    },
+    selectedAddress: String,
+    role: { type: String, default: "user" }, // Roles - "user", "admin"
   },
 );
 
