@@ -118,6 +118,22 @@
   color: #4b5563;
 }
 
+.loadingLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 999px;
+  animation: spin 0.75s linear infinite;
+}
+
 .cards {
   display: grid;
   gap: 14px;
@@ -175,5 +191,11 @@
 @media (max-width: 820px) {
   .contentGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

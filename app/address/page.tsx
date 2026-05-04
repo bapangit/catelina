@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import SelectAddressButton from "./SelectAddressButton";
 import styles from "./page.module.css";
 import mongoose from "mongoose";
 
@@ -270,13 +271,7 @@ export default async function AddressPage({ searchParams }: AddressPageProps) {
                       <form action={selectAddress}>
                         <input name="addressId" type="hidden" value={addressId} />
                         <input name="returnTo" type="hidden" value={returnTo} />
-                        <button
-                          className={styles.secondaryButton}
-                          disabled={isSelected}
-                          type="submit"
-                        >
-                          {isSelected ? "Selected Address" : "Use This Address"}
-                        </button>
+                        <SelectAddressButton isSelected={isSelected} />
                       </form>
                     </article>
                   );
