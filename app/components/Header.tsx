@@ -9,6 +9,8 @@ import SearchComp from "../../components/SearchComponent";
 import ProfileComp from "../../components/ProfileComponent";
 import Link from "next/link";
 import { useState } from 'react';
+import { MdOutlineLocalShipping } from "react-icons/md";
+
 
 type HeaderProps = {
   styles: Record<string, string>;
@@ -50,19 +52,21 @@ export default function Header({ styles }: HeaderProps) {
         <div className={styles.header_secondary_nav}>
           <ul>
             {isAdmin && (
+              <>
               <li>
                 <Link href="/admin/addproduct" className={styles.addButton}>
                   <IoMdAdd className="icon" />
                 </Link>
               </li>
-            )}
-            {isAdmin && (
               <li>
                 <Link href="/admin/drafts" className={styles.draftButton}>
                   <RiDraftLine className="icon" />
                 </Link>
               </li>
+              
+              </>
             )}
+            
             <li>
               <span>
                 <LuShoppingCart className="icon" />

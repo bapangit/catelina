@@ -1,12 +1,14 @@
 import ProductImageSlider from "@/app/components/ProductImageSlider";
 import connectDB from "@/config/DBConnect";
 import Address from "@/config/models/address";
+import Order from "@/config/models/orders";
 import Product from "@/config/models/product";
 import User from "@/config/models/user";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import styles from "./page.module.css";
 
@@ -14,6 +16,7 @@ type OrderPageProps = {
   searchParams: Promise<{
     productId?: string;
     size?: string;
+    orderId?: string;
   }>;
 };
 
@@ -41,6 +44,7 @@ type AddressRecord = {
 
 const DELIVERY_FEE = 98;
 const availableSizes = ["S", "M", "L"];
+const paymentMethods = ["Cash On Delivery", "UPI", "Cards"];
 
 const parsePrice = (value?: string) => {
   const price = Number((value || "").replace(/[^0-9.]/g, ""));
@@ -49,6 +53,32 @@ const parsePrice = (value?: string) => {
 };
 
 const formatPrice = (value: number) => `Rs. ${value.toFixed(2)}`;
+
+function readRequiredField(formData: FormData, key: string) {
+  const value = formData.get(key);
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getSavedOrderIds(user: { orderIds?: string[] }) {
+  return Array.from(
+    new Set(
+      (Array.isArray(user.orderIds) ? user.orderIds : [])
+        .filter((orderId): orderId is string => Boolean(orderId))
+        .map((orderId) => String(orderId))
+    )
+  );
+}
+
+async function getCurrentUser() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  await connectDB();
+  return User.findOne({ email: session.user.email });
+}
 
 async function getProductById(id: string): Promise<ProductRecord | null> {
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -70,15 +100,7 @@ async function getProductById(id: string): Promise<ProductRecord | null> {
 }
 
 async function getSelectedAddress(): Promise<AddressRecord | null> {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.email) {
-    return null;
-  }
-
-  await connectDB();
-
-  const user = await User.findOne({ email: session.user.email });
+  const user = await getCurrentUser();
   const selectedAddressId = user?.selectedAddress
     ? String(user.selectedAddress)
     : "";
@@ -102,8 +124,75 @@ async function getSelectedAddress(): Promise<AddressRecord | null> {
   };
 }
 
+async function confirmOrder(formData: FormData) {
+  "use server";
+
+  const user = await getCurrentUser();
+  const productId = readRequiredField(formData, "productId");
+  const size = readRequiredField(formData, "size");
+  const paymentMethod = readRequiredField(formData, "paymentMethod");
+
+  if (!user) {
+    throw new Error("You must be signed in to confirm an order.");
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(productId)) {
+    throw new Error("Invalid product.");
+  }
+
+  if (!availableSizes.includes(size)) {
+    throw new Error("Invalid size.");
+  }
+
+  if (paymentMethod !== "Cash On Delivery") {
+    throw new Error("This payment method is not available yet.");
+  }
+
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new Error("Product not found.");
+  }
+
+  const selectedAddressId = user.selectedAddress
+    ? String(user.selectedAddress)
+    : "";
+
+  if (!mongoose.Types.ObjectId.isValid(selectedAddressId)) {
+    throw new Error("Select a delivery address before confirming your order.");
+  }
+
+  const selectedAddress = await Address.findOne({
+    _id: selectedAddressId,
+    userId: String(user._id),
+  });
+
+  if (!selectedAddress) {
+    throw new Error("Selected delivery address was not found.");
+  }
+
+  const order = await Order.create({
+    user: String(user._id),
+    productId,
+    size,
+    paymentMethod,
+  });
+
+  user.orderIds = [...getSavedOrderIds(user), String(order._id)];
+  await user.save();
+
+  revalidatePath("/order");
+  redirect(
+    `/order?${new URLSearchParams({
+      productId,
+      size,
+      orderId: String(order._id),
+    }).toString()}`
+  );
+}
+
 export default async function OrderPage({ searchParams }: OrderPageProps) {
-  const { productId, size } = await searchParams;
+  const { productId, size, orderId } = await searchParams;
 
   if (!productId || !size || !availableSizes.includes(size)) {
     notFound();
@@ -131,7 +220,13 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
       <section className={styles.container}>
         <h1 className={styles.heading}>Order Summary</h1>
 
-        <div className={styles.summaryGrid}>
+        {orderId ? (
+          <p className={styles.successMessage}>Order confirmed successfully.</p>
+        ) : null}
+
+        <form action={confirmOrder} className={styles.summaryGrid}>
+          <input name="productId" type="hidden" value={productId} />
+          <input name="size" type="hidden" value={size} />
           <div className={styles.detailsColumn}>
             <div className={styles.productPanel}>
               <div className={styles.imageWrapper}>
@@ -180,6 +275,24 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
                 </div>
               )}
             </section>
+
+            <section className={styles.paymentPanel}>
+              <h2>Payment Method</h2>
+              <div className={styles.paymentOptions}>
+                {paymentMethods.map((method, index) => (
+                  <label key={method} className={styles.paymentOption}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value={method}
+                      defaultChecked={index === 0}
+                      disabled={index !== 0}
+                    />
+                    <span>{method}</span>
+                  </label>
+                ))}
+              </div>
+            </section>
           </div>
 
           <aside className={styles.pricePanel}>
@@ -196,8 +309,15 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
               <span>Total</span>
               <span>{formatPrice(totalPrice)}</span>
             </div>
+            <button
+              className={styles.confirmButton}
+              disabled={!selectedAddress || Boolean(orderId)}
+              type="submit"
+            >
+              {orderId ? "Order Confirmed" : "Confirm Order"}
+            </button>
           </aside>
-        </div>
+        </form>
       </section>
     </main>
   );

@@ -155,11 +155,12 @@ const ProductsClient = () => {
     };
 
     document.addEventListener("keydown", handleKeyDown);
+    const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousBodyOverflow;
     };
   }, [isFilterModalOpen]);
 

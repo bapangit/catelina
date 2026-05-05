@@ -262,4 +262,28 @@
   .filterModalOverlay {
     display: flex;
   }
+
+  .productsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .productCard {
+    min-height: 0;
+  }
+
+  .productDetails {
+    padding: 10px 8px 12px;
+  }
+
+  .productBrand,
+  .priceRow p {
+    font-size: 0.92rem;
+  }
+
+  .productTitle,
+  .prevPrice,
+  .discountText {
+    font-size: 0.82rem;
+  }
 }

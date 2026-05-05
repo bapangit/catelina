@@ -2,8 +2,10 @@ import mongoose, { Schema } from "mongoose";
 
 const orderSchema = new Schema(
   {
+    user:String,
     productId:String,
-    size:String
+    size:String,
+    paymentMethod:String
   },
   {
     timestamps: true,

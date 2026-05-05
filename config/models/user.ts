@@ -16,6 +16,10 @@ const userSchema = new Schema(
       },
     },
     selectedAddress: String,
+    orderIds: {
+      type: [String],
+      default: [],
+    },
     role: { type: String, default: "user" }, // Roles - "user", "admin"
   },
 );
