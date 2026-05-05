@@ -63,6 +63,11 @@ export default function Header({ styles }: HeaderProps) {
                   <RiDraftLine className="icon" />
                 </Link>
               </li>
+              <li>
+                <Link href="/admin/orders" className={styles.draftButton}>
+                  <MdOutlineLocalShipping className="icon" />
+                </Link>
+              </li>
               
               </>
             )}

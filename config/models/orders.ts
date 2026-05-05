@@ -4,8 +4,20 @@ const orderSchema = new Schema(
   {
     user:String,
     productId:String,
+    addressId:String,
+    address: {
+      name: String,
+      ph: String,
+      pin: String,
+      at: String,
+      po: String,
+      dist: String,
+      state: String,
+    },
     size:String,
-    paymentMethod:String
+    amount:String,
+    paymentMethod:String,
+    status:{type:String,default:"placed"} // placed, confirmed, shipped, delivered
   },
   {
     timestamps: true,

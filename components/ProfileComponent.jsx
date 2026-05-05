@@ -53,6 +53,14 @@ const ProfileComponent = ({ styles }) => {
           {session ? (
             <div className={styles.profile_actions}>
               <Link
+                href="/orders"
+                className={styles.profile_action_button}
+                onClick={() => setShowPanel(false)}
+              >
+                Orders
+              </Link>
+
+              <Link
                 href="/address"
                 className={styles.profile_action_button}
                 onClick={() => setShowPanel(false)}

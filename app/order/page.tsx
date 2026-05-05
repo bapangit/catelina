@@ -174,7 +174,18 @@ async function confirmOrder(formData: FormData) {
   const order = await Order.create({
     user: String(user._id),
     productId,
+    addressId: String(selectedAddress._id),
+    address: {
+      name: selectedAddress.name,
+      ph: selectedAddress.ph,
+      pin: selectedAddress.pin,
+      at: selectedAddress.at,
+      po: selectedAddress.po,
+      dist: selectedAddress.dist,
+      state: selectedAddress.state,
+    },
     size,
+    amount: formatPrice(parsePrice(product.price) + DELIVERY_FEE),
     paymentMethod,
   });
 
