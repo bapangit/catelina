@@ -196,11 +196,83 @@
 }
 
 .hero_section{
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 28%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
   min-height: calc(100vh - 60px);
-  padding: 56px 24px;
+  padding: 48px 24px;
+  background: #f7f2ec;
+  display: flex;
+  align-items: center;
+}
+
+.hero_content {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  align-items: center;
+  gap: 48px;
+}
+
+.hero_copy {
+  color: #241f1c;
+}
+
+.hero_eyebrow {
+  margin: 0 0 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #8a4f37;
+}
+
+.hero_title {
+  max-width: 620px;
+  margin: 0;
+  font-size: clamp(2.5rem, 7vw, 5.75rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.hero_text {
+  max-width: 520px;
+  margin: 22px 0 0;
+  color: #5e5750;
+  font-size: clamp(1rem, 2vw, 1.16rem);
+  line-height: 1.7;
+}
+
+.hero_cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 30px;
+  padding: 0 24px;
+  border: 1px solid #241f1c;
+  background: #241f1c;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.hero_cta:hover {
+  background: transparent;
+  color: #241f1c;
+}
+
+.hero_image_wrap {
+  position: relative;
+  width: 100%;
+  min-height: min(620px, calc(100vh - 140px));
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #eaded3;
+}
+
+.hero_image {
+  object-fit: cover;
+  object-position: center;
 }
 
 .profile_component {
@@ -427,6 +499,29 @@
 
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
+  .hero_section {
+    padding: 28px 18px 36px;
+    align-items: stretch;
+  }
+
+  .hero_content {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .hero_image_wrap {
+    min-height: 58vh;
+    order: -1;
+  }
+
+  .hero_title {
+    font-size: clamp(2.25rem, 12vw, 4.25rem);
+  }
+
+  .hero_text {
+    line-height: 1.55;
+  }
+
   .hamburger_container {
     display: block;
   }
