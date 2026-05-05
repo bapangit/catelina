@@ -2,7 +2,8 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { addToCart } from "./actions";
 import styles from "./page.module.css";
 
 type OrderControlsProps = {
@@ -15,6 +16,8 @@ export default function OrderControls({ productId }: OrderControlsProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [selectedSize, setSelectedSize] = useState("");
+  const [cartMessage, setCartMessage] = useState("");
+  const [isAddingToCart, startAddToCartTransition] = useTransition();
 
   const openOrderPage = () => {
     if (!selectedSize) {
@@ -41,6 +44,26 @@ export default function OrderControls({ productId }: OrderControlsProps) {
     router.push(`/order?${params.toString()}`);
   };
 
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      return;
+    }
+
+    setCartMessage("");
+
+    if (!session) {
+      signIn("google", {
+        callbackUrl: `/product/${productId}`,
+      });
+      return;
+    }
+
+    startAddToCartTransition(async () => {
+      const result = await addToCart(productId, selectedSize);
+      setCartMessage(result.message);
+    });
+  };
+
   return (
     <div className={styles.optionSection}>
       <div className={styles.optionTitle}>Select Size</div>
@@ -59,14 +82,29 @@ export default function OrderControls({ productId }: OrderControlsProps) {
           </button>
         ))}
       </div>
-      <button
-        className={styles.orderButton}
-        disabled={!selectedSize || status === "loading"}
-        onClick={openOrderPage}
-        type="button"
-      >
-        Order
-      </button>
+      <div className={styles.actionButtons}>
+        <button
+          className={styles.cartButton}
+          disabled={!selectedSize || status === "loading" || isAddingToCart}
+          onClick={handleAddToCart}
+          type="button"
+        >
+          {isAddingToCart ? "Adding..." : "Add to Cart"}
+        </button>
+        <button
+          className={styles.orderButton}
+          disabled={!selectedSize || status === "loading"}
+          onClick={openOrderPage}
+          type="button"
+        >
+          Place Order
+        </button>
+      </div>
+      {cartMessage ? (
+        <p className={styles.cartMessage} role="status">
+          {cartMessage}
+        </p>
+      ) : null}
     </div>
   );
 }

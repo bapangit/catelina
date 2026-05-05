@@ -75,9 +75,9 @@ export default function Header({ styles }: HeaderProps) {
             )}
             
             <li>
-              <span>
+              <Link href="/cart" aria-label="View cart">
                 <LuShoppingCart className="icon" />
-              </span>
+              </Link>
             </li>
             <li>
               <ProfileComp styles={styles} />
