@@ -46,7 +46,9 @@ export default function Header({ styles }: HeaderProps) {
             <li>
               <Link href="/categories">Categories</Link>
             </li>
-            <li>Most Ordered</li>
+            <li>
+              <Link href="/most-ordered">Most Ordered</Link>
+            </li>
           </ol>
         </nav>
         <div className={styles.header_secondary_nav}>
@@ -99,7 +101,9 @@ export default function Header({ styles }: HeaderProps) {
                 <li>
                   <Link href="/categories" onClick={() => setMenuOpen(false)}>Categories</Link>
                 </li>
-                <li>Most Rated</li>
+                <li>
+                  <Link href="/most-ordered" onClick={() => setMenuOpen(false)}>Most Ordered</Link>
+                </li>
               </ol>
             </nav>
           </div>
