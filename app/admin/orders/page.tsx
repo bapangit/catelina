@@ -47,7 +47,13 @@ type UserRecord = {
   selectedAddress?: string;
 };
 
-const orderStatuses = ["placed", "confirmed", "shipped", "delivered"];
+type AdminOrdersPageProps = {
+  searchParams: Promise<{
+    status?: string;
+  }>;
+};
+
+const orderStatuses = ["placed", "confirmed", "shipped", "delivered", "cancelled"];
 
 async function getAdminSession() {
   const session = await getServerSession(authOptions);
@@ -94,6 +100,10 @@ function formatStatus(value?: string) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function getStatusFilter(status?: string) {
+  return status && orderStatuses.includes(status) ? status : "";
 }
 
 function uniqueValidIds(values: Array<string | undefined>) {
@@ -157,8 +167,12 @@ async function updateOrderStatus(formData: FormData) {
   revalidatePath("/orders");
 }
 
-export default async function AdminOrdersPage() {
+export default async function AdminOrdersPage({
+  searchParams,
+}: AdminOrdersPageProps) {
   const session = await getAdminSession();
+  const { status } = await searchParams;
+  const activeStatus = getStatusFilter(status);
 
   if (!session) {
     return (
@@ -173,7 +187,13 @@ export default async function AdminOrdersPage() {
 
   await connectDB();
 
-  const orders = await Order.find({})
+  const orderQuery =
+    activeStatus === "placed"
+      ? { $or: [{ status: activeStatus }, { status: { $exists: false } }] }
+      : activeStatus
+        ? { status: activeStatus }
+        : {};
+  const orders = await Order.find(orderQuery)
     .sort({ createdAt: -1 })
     .lean<OrderRecord[]>();
   const productIds = uniqueValidIds(orders.map((order) => order.productId));
@@ -211,6 +231,26 @@ export default async function AdminOrdersPage() {
             View every order with customer, product, delivery address, and status.
           </p>
         </div>
+
+        <form action="/admin/orders" className={styles.filterForm} method="get">
+          <label>
+            <span>Filter by status</span>
+            <select name="status" defaultValue={activeStatus || "all"}>
+              <option value="all">All Orders</option>
+              {orderStatuses.map((status) => (
+                <option key={status} value={status}>
+                  {formatStatus(status)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button type="submit">Apply Filter</button>
+          {activeStatus ? (
+            <Link className={styles.clearFilterLink} href="/admin/orders">
+              Clear
+            </Link>
+          ) : null}
+        </form>
 
         {orders.length > 0 ? (
           <div className={styles.orderList}>
@@ -305,7 +345,11 @@ export default async function AdminOrdersPage() {
           </div>
         ) : (
           <div className={styles.emptyState}>
-            <p className={styles.emptyText}>No orders found.</p>
+            <p className={styles.emptyText}>
+              {activeStatus
+                ? `No ${formatStatus(activeStatus).toLowerCase()} orders found.`
+                : "No orders found."}
+            </p>
           </div>
         )}
       </section>

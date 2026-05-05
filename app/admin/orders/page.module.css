@@ -27,6 +27,57 @@
   line-height: 1.5;
 }
 
+.filterForm {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.filterForm label {
+  display: grid;
+  gap: 8px;
+  color: #374151;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.filterForm select {
+  min-width: 200px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 1rem;
+  padding: 10px 12px;
+}
+
+.filterForm button,
+.clearFilterLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 10px 14px;
+}
+
+.filterForm button {
+  border: none;
+  background: #111827;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.clearFilterLink {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  text-decoration: none;
+}
+
 .orderList {
   display: grid;
   gap: 16px;
@@ -161,15 +212,22 @@
 
 @media (max-width: 620px) {
   .orderHeader,
+  .filterForm,
   .statusForm {
     align-items: stretch;
     flex-direction: column;
   }
 
+  .filterForm select,
+  .filterForm button,
+  .clearFilterLink,
   .statusForm {
     justify-content: stretch;
   }
 
+  .filterForm select,
+  .filterForm button,
+  .clearFilterLink,
   .statusForm select,
   .statusForm button {
     width: 100%;

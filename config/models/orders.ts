@@ -17,7 +17,7 @@ const orderSchema = new Schema(
     size:String,
     amount:String,
     paymentMethod:String,
-    status:{type:String,default:"placed"} // placed, confirmed, shipped, delivered
+    status:{type:String,default:"placed"} // placed, confirmed, shipped, delivered, cancelled
   },
   {
     timestamps: true,
