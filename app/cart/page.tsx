@@ -179,6 +179,7 @@ export default async function CartPage() {
 
                     <div className={styles.cartMeta}>
                       <span>Cart ID: {cartId}</span>
+                      <span>Selected Size: {item.size || "Not selected"}</span>
                       <span>Price: {product?.price || "Not available"}</span>
                     </div>
 
