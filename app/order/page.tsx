@@ -189,6 +189,11 @@ async function confirmOrder(formData: FormData) {
     paymentMethod,
   });
 
+  await Product.updateOne(
+    { _id: productId },
+    { $inc: { orderFrequency: 1 } }
+  );
+
   user.orderIds = [...getSavedOrderIds(user), String(order._id)];
   await user.save();
 

@@ -506,22 +506,22 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
         </select>
       </div>
 
-      <div className={styles.formGroup}>
-        <label>Material</label>
-
-        <select value={fabric} onChange={(e) => setFabric(e.target.value)}>
-          <option value="">Select material</option>
-          {fabricOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <div className={styles.infoSection}>
         <h3 className={styles.sectionTitle}>Product Information</h3>
         <div className={styles.infoGrid}>
+          <div className={styles.formGroup}>
+            <label>Material</label>
+
+            <select value={fabric} onChange={(e) => setFabric(e.target.value)}>
+              <option value="">Select material</option>
+              {fabricOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className={styles.formGroup}>
             <label>Pattern</label>
             <select value={pattern} onChange={(e) => setPattern(e.target.value)}>

@@ -12,6 +12,7 @@ const productSchema = new Schema(
     image3: String,
     image4: String,
     image5: String,
+    orderFrequency:{type:Number,default:0},
     fabric:String,
     pattern: String,
     occasion: String,

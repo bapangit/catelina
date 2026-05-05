@@ -309,10 +309,10 @@ const ProductsClient = () => {
 
                   <div className={styles.productDetails}>
                     <h3 className={styles.productBrand}>
-                      {product.category || "Product"}
+                      {product.title || "Product"}
                     </h3>
                     <p className={styles.productTitle}>
-                      {product.title || "Untitled Product"}
+                      {product.description || "Untitled Product"}
                     </p>
                     <div className={styles.priceRow}>
                       <p>Rs. {product.price || "0"}</p>
