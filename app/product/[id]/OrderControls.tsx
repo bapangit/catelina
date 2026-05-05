@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "./page.module.css";
@@ -12,10 +13,23 @@ const sizes = ["S", "M", "L"];
 
 export default function OrderControls({ productId }: OrderControlsProps) {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [selectedSize, setSelectedSize] = useState("");
 
   const openOrderPage = () => {
     if (!selectedSize) {
+      return;
+    }
+
+    if (!session) {
+      const params = new URLSearchParams({
+        productId,
+        size: selectedSize,
+      });
+
+      signIn("google", {
+        callbackUrl: `/order?${params.toString()}`,
+      });
       return;
     }
 
@@ -47,7 +61,7 @@ export default function OrderControls({ productId }: OrderControlsProps) {
       </div>
       <button
         className={styles.orderButton}
-        disabled={!selectedSize}
+        disabled={!selectedSize || status === "loading"}
         onClick={openOrderPage}
         type="button"
       >

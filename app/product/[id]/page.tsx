@@ -2,7 +2,9 @@ import ProductImageSlider from "@/app/components/ProductImageSlider";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import mongoose from "mongoose";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
 
@@ -35,7 +37,7 @@ type ProductRecord = {
   careInstructions?: string;
 };
 
-async function getProductById(id: string): Promise<ProductRecord | null> {
+const getProductById = cache(async (id: string): Promise<ProductRecord | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return null;
   }
@@ -51,6 +53,26 @@ async function getProductById(id: string): Promise<ProductRecord | null> {
   return {
     ...product,
     _id: String(product._id),
+  };
+});
+
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProductById(id);
+  const productTitle = product?.title || "Product";
+  const productDescription = product?.description?.trim();
+  const shortDescription =
+    productDescription && productDescription.length > 80
+      ? `${productDescription.slice(0, 77).trim()}...`
+      : productDescription;
+
+  return {
+    title: shortDescription
+      ? `${productTitle} - ${shortDescription}`
+      : productTitle,
+    description: productDescription || `Shop ${productTitle} at catelina.in`,
   };
 }
 
