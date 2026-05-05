@@ -46,7 +46,7 @@ export default function Header({ styles }: HeaderProps) {
             <li>
               <Link href="/categories">Categories</Link>
             </li>
-            <li>Most Rated</li>
+            <li>Most Ordered</li>
           </ol>
         </nav>
         <div className={styles.header_secondary_nav}>
