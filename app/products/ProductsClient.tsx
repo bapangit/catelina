@@ -54,7 +54,9 @@ const ProductsClient = () => {
   const [searchText, setSearchText] = useState("");
   const [debouncedSearchText, setDebouncedSearchText] = useState("");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isFilterButtonHidden, setIsFilterButtonHidden] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
+  const lastScrollY = useRef(0);
 
   const loadProducts = useCallback(async (
     pageNumber: number,
@@ -161,6 +163,30 @@ const ProductsClient = () => {
     };
   }, [isFilterModalOpen]);
 
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > lastScrollY.current + 8;
+      const isScrollingUp = currentScrollY < lastScrollY.current - 8;
+
+      if (currentScrollY < 24 || isScrollingUp) {
+        setIsFilterButtonHidden(false);
+      } else if (isScrollingDown) {
+        setIsFilterButtonHidden(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const renderFilters = (idPrefix: string) => (
     <>
       <div className={styles.filterGroup}>
@@ -202,7 +228,9 @@ const ProductsClient = () => {
       <section className={styles.productsContent}>
         <button
           type="button"
-          className={styles.mobileFilterButton}
+          className={`${styles.mobileFilterButton} ${
+            isFilterButtonHidden ? styles.mobileFilterButtonHidden : ""
+          }`}
           onClick={() => setIsFilterModalOpen(true)}
         >
           <IoFilterOutline aria-hidden="true" />
