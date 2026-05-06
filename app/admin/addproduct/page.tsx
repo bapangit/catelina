@@ -447,7 +447,7 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
 
   return (
     <div className={styles.pageShell}>
-      <h2>Add New Product</h2>
+      <h2>{draftId ? "Edit Product" : "Add New Product"}</h2>
       <p>Product ID: {productId}</p>
       <div className={styles.formGroup}>
         <label>Product Title</label>
