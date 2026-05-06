@@ -29,7 +29,8 @@ export const fabricOptions = [
   "Acrylic",
   "Bamboo Fabric",
   "Modal",
-  "Hemp"
+  "Hemp",
+  "Cotton Blend"
 ];
 
 export const patternOptions = [
@@ -81,6 +82,7 @@ export const closureOptions = [
   "Button Closure",
   "Hook and Eye",
   "Tie-Up",
+  "Slip-On"
 ];
 
 export const packSizeOptions = [
@@ -97,7 +99,8 @@ export const dressesSubcategoryOptions = [
   "A-Line",
   "Bodycon",
   "Shift",
-  "Wrap",
+  "Wrap",,
+  "Anarkali Dress"
 ];
 
 export const sleeveStyleOptions = [
@@ -108,6 +111,7 @@ export const sleeveStyleOptions = [
   "Long Sleeves",
   "Puff Sleeves",
   "Bell Sleeves",
+  "Half Sleeves"
 ];
 
 export const dressShapeOptions = [
@@ -118,6 +122,7 @@ export const dressShapeOptions = [
   "Straight",
   "Wrap",
   "Empire",
+  "Flared"
 ];
 
 export const careInstructionOptions = [
