@@ -122,7 +122,8 @@ export const dressShapeOptions = [
   "Straight",
   "Wrap",
   "Empire",
-  "Flared"
+  "Flared",
+  "Fit and Flare"
 ];
 
 export const careInstructionOptions = [
@@ -131,6 +132,7 @@ export const careInstructionOptions = [
   "Dry Clean Only",
   "Machine Wash / Dry Cleaning",
   "Gentle Wash",
+  "Machine Wash Cold"
 ];
 
 
