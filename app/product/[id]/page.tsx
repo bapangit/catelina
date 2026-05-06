@@ -1,10 +1,15 @@
 import ProductImageSlider from "@/app/components/ProductImageSlider";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 import mongoose from "mongoose";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
+import DeleteProductForm from "./DeleteProductForm";
 import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
 
@@ -37,6 +42,11 @@ type ProductRecord = {
   careInstructions?: string;
 };
 
+type ProductImages = Pick<
+  ProductRecord,
+  "image1" | "image2" | "image3" | "image4" | "image5"
+>;
+
 const getProductById = cache(async (id: string): Promise<ProductRecord | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return null;
@@ -56,6 +66,17 @@ const getProductById = cache(async (id: string): Promise<ProductRecord | null> =
   };
 });
 
+const getProductImageUrls = (product: ProductImages) =>
+  [
+    product.image1,
+    product.image2,
+    product.image3,
+    product.image4,
+    product.image5,
+  ].filter((imageUrl): imageUrl is string =>
+    Boolean(imageUrl && imageUrl.trim() && imageUrl.startsWith("http"))
+  );
+
 const parsePrice = (value?: string) => {
   const price = Number((value || "").replace(/[^0-9.]/g, ""));
 
@@ -72,6 +93,40 @@ const getDiscountPercentage = (prevPrice?: string, price?: string) => {
 
   return Math.round(((previous - current) / previous) * 100);
 };
+
+async function deleteProduct(formData: FormData) {
+  "use server";
+
+  const session = await getServerSession(authOptions);
+  const productId = formData.get("productId");
+
+  if (!session?.user || session.user.role !== "admin") {
+    throw new Error("Only admins can delete products.");
+  }
+
+  if (typeof productId !== "string" || !mongoose.Types.ObjectId.isValid(productId)) {
+    throw new Error("Invalid product.");
+  }
+
+  await connectDB();
+
+  const product = await Product.findById(productId).lean<ProductImages | null>();
+
+  if (!product) {
+    notFound();
+  }
+
+  const imageUrls = getProductImageUrls(product);
+
+  await Promise.all(imageUrls.map((imageUrl) => deleteFromCloudinary(imageUrl)));
+  await Product.findByIdAndDelete(productId);
+
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/most-ordered");
+  revalidatePath(`/product/${productId}`);
+  redirect("/products");
+}
 
 export async function generateMetadata({
   params,
@@ -101,6 +156,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
+  const session = await getServerSession(authOptions);
+  const isAdmin = session?.user?.role === "admin";
   const productDetails = [
     { label: "Category", value: product.category },
     { label: "Material", value: product.fabric },
@@ -140,6 +197,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className={styles.details}>
           <div className={styles.headerRow}>
             <h1 className={styles.title}>{product.title || "Untitled Product"}</h1>
+            {isAdmin ? (
+              <DeleteProductForm
+                action={deleteProduct}
+                productId={product._id}
+                productTitle={product.title}
+              />
+            ) : null}
           </div>
           <p className={styles.description}>
             {product.description || "No description available."}

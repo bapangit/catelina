@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from "next-auth/react";
 import { LuShoppingCart } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 import { RiDraftLine } from "react-icons/ri";
@@ -8,7 +8,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import SearchComp from "../../components/SearchComponent";
 import ProfileComp from "../../components/ProfileComponent";
 import Link from "next/link";
-import { useState } from 'react';
+import { type MouseEvent, useState } from "react";
 import { MdOutlineLocalShipping } from "react-icons/md";
 import Image from "next/image";
 
@@ -18,10 +18,22 @@ type HeaderProps = {
 };
 
 export default function Header({ styles }: HeaderProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = session?.user?.role === "admin";
+
+  const handleCartClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (status === "loading") {
+      event.preventDefault();
+      return;
+    }
+
+    if (!session) {
+      event.preventDefault();
+      signIn("google", { callbackUrl: "/cart" });
+    }
+  };
 
   return (
     <>
@@ -83,7 +95,7 @@ export default function Header({ styles }: HeaderProps) {
             )}
             
             <li>
-              <Link href="/cart" aria-label="View cart">
+              <Link href="/cart" aria-label="View cart" onClick={handleCartClick}>
                 <LuShoppingCart className="icon" />
               </Link>
             </li>
