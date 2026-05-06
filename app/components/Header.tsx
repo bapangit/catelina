@@ -10,6 +10,7 @@ import ProfileComp from "../../components/ProfileComponent";
 import Link from "next/link";
 import { useState } from 'react';
 import { MdOutlineLocalShipping } from "react-icons/md";
+import Image from "next/image";
 
 
 type HeaderProps = {
@@ -36,7 +37,14 @@ export default function Header({ styles }: HeaderProps) {
         </div>
         <SearchComp styles={styles} />
         <Link href="/" className={styles.logo_link}> 
-          <p className={styles.p}>Ecom App</p>
+          <Image
+            className={styles.logo_image}
+            src="/logo.png"
+            alt="Catelina"
+            width={800}
+            height={355}
+            priority
+          />
         </Link>
         <nav className={styles.nav}>
           <ol className={styles.ol}>

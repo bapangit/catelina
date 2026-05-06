@@ -56,6 +56,23 @@ const getProductById = cache(async (id: string): Promise<ProductRecord | null> =
   };
 });
 
+const parsePrice = (value?: string) => {
+  const price = Number((value || "").replace(/[^0-9.]/g, ""));
+
+  return Number.isFinite(price) ? price : 0;
+};
+
+const getDiscountPercentage = (prevPrice?: string, price?: string) => {
+  const previous = parsePrice(prevPrice);
+  const current = parsePrice(price);
+
+  if (!previous || !current || current >= previous) {
+    return null;
+  }
+
+  return Math.round(((previous - current) / previous) * 100);
+};
+
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
@@ -100,6 +117,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const hasProductInfo =
     productDetails.length > 0 || Boolean(product.careInstructions);
+  const discountPercentage = getDiscountPercentage(
+    product.prevPrice,
+    product.price
+  );
 
   return (
     <div className={styles.container}>
@@ -128,6 +149,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <p className={styles.price}>Rs. {product.price || "0"}</p>
               {product.prevPrice ? (
                 <p className={styles.prevPrice}>Rs. {product.prevPrice}</p>
+              ) : null}
+              {discountPercentage !== null ? (
+                <span className={styles.discountText}>
+                  {discountPercentage}% OFF
+                </span>
               ) : null}
             </div>
             <span className={styles.taxText}>MRP inclusive of all taxes</span>
