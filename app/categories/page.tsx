@@ -6,16 +6,21 @@ export default function CategoriesPage() {
   return (
     <section className={styles.page}>
       <div className={styles.hero}>
-        <p className={styles.eyebrow}>Shop by Category</p>
-        <h1 className={styles.title}>Indian Ladies Clothing</h1>
+        <p className={styles.eyebrow}>Browse by Style</p>
+        <h1 className={styles.title}>Indianwear for Every Moment</h1>
         <p className={styles.subtitle}>
-          Explore a few curated categories to start browsing women&apos;s ethnic styles.
+          Find graceful sarees, easy kurtis, festive sets, and flowing dresses
+          curated for everyday plans and special celebrations.
         </p>
       </div>
 
       <div className={styles.grid}>
         {dressCategories.map((category) => (
-          <article key={category.name} className={styles.card}>
+          <Link
+            key={category.name}
+            href={`/products?category=${encodeURIComponent(category.name)}`}
+            className={styles.card}
+          >
             <div
               className={styles.image}
               style={{ backgroundImage: `url(${category.image})` }}
@@ -24,11 +29,11 @@ export default function CategoriesPage() {
             <div className={styles.content}>
               <h2 className={styles.cardTitle}>{category.name}</h2>
               <p className={styles.cardText}>{category.description}</p>
-              <Link href="/products" className={styles.link}>
-                View Products
-              </Link>
+              <span className={styles.link}>
+                Shop now
+              </span>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </section>

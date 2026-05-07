@@ -44,15 +44,16 @@ const getDiscountPercentage = (prevPrice: string, price: string) => {
 const ProductsClient = () => {
   const searchParams = useSearchParams();
   const urlSearchText = searchParams.get("search") || "";
+  const urlCategory = searchParams.get("category") || "";
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
-  const [category, setCategory] = useState("");
-  const [searchText, setSearchText] = useState("");
-  const [debouncedSearchText, setDebouncedSearchText] = useState("");
+  const [category, setCategory] = useState(urlCategory);
+  const [searchText, setSearchText] = useState(urlSearchText);
+  const [debouncedSearchText, setDebouncedSearchText] = useState(urlSearchText);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isFilterButtonHidden, setIsFilterButtonHidden] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -108,6 +109,10 @@ const ProductsClient = () => {
   useEffect(() => {
     setSearchText(urlSearchText);
   }, [urlSearchText]);
+
+  useEffect(() => {
+    setCategory(urlCategory);
+  }, [urlCategory]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {

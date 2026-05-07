@@ -40,10 +40,13 @@
 }
 
 .card {
+  color: inherit;
+  display: block;
   overflow: hidden;
   border: 1px solid #e2e8f0;
   background: #fff;
   box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.45);
+  text-decoration: none;
 }
 
 .image {

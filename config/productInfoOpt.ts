@@ -140,26 +140,26 @@ export const dressCategories = [
   {
     name: "Sarees",
     image: "/category/saree.jpg",
-    description: "Classic drapes for festive, wedding, and everyday elegance.",
+    description: "Timeless drapes with rich textures for weddings, festivals, and elegant everyday dressing.",
   },
   {
     name: "Kurtis",
     image: "/category/kurti.jpg",
-    description: "Easy ethnic wear styles for office, outings, and daily comfort.",
+    description: "Comfortable, polished staples made for workdays, casual outings, and repeat wear.",
   },
   {
     name: "Salwar Suits",
-    image: "/category/saree.jpg",
-    description: "Coordinated sets with graceful silhouettes for polished traditional dressing.",
+    image: "/category/salwar.jpg",
+    description: "Complete looks with graceful cuts, soft movement, and an effortlessly traditional feel.",
   },
   {
     name: "Lehengas",
-    image: "/category/kurti.jpg",
-    description: "Statement occasion outfits for celebrations and special events.",
+    image: "/category/lehengas.jpg",
+    description: "Celebration-ready styles with standout details for parties, ceremonies, and festive nights.",
   },
   {
     name: "Maxi",
-    image: "/category/kurti.jpg",
-    description: "Long flowing dresses made for relaxed days, vacations, and evening plans.",
+    image: "/category/maxi.jpg",
+    description: "Flowing silhouettes that bring easy elegance to relaxed days, trips, and evening plans.",
   }
 ];

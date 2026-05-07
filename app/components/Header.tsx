@@ -69,6 +69,9 @@ export default function Header({ styles }: HeaderProps) {
             <li>
               <Link href="/most-ordered">Most Ordered</Link>
             </li>
+            <li>
+              <Link href="/about">About</Link>
+            </li>
           </ol>
         </nav>
         <div className={styles.header_secondary_nav}>
@@ -123,6 +126,9 @@ export default function Header({ styles }: HeaderProps) {
                 </li>
                 <li>
                   <Link href="/most-ordered" onClick={() => setMenuOpen(false)}>Most Ordered</Link>
+                </li>
+                <li>
+                  <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
                 </li>
               </ol>
             </nav>

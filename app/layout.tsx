@@ -70,6 +70,9 @@ export default function RootLayout({
                       <li>
                         <Link href="/most-ordered">Most Ordered</Link>
                       </li>
+                      <li>
+                        <Link href="/about">About Us</Link>
+                      </li>
                     </ul>
                   </div>
 
