@@ -123,7 +123,6 @@ export const dressShapeOptions = [
   "Wrap",
   "Empire",
   "Flared",
-  "Fit and Flare"
 ];
 
 export const careInstructionOptions = [
