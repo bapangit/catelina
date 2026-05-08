@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
-export const availableSizes = ["S", "M", "L"];
+export const availableSizes = ["S", "M", "L", "XL", "XXL"];
 
 type UserDocument = {
   _id: unknown;

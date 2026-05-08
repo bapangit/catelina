@@ -9,7 +9,7 @@ import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 
-const availableSizes = ["S", "M", "L"];
+const availableSizes = ["S", "M", "L", "XL", "XXL"];
 
 export async function addToCart(productId: string, size: string) {
   const session = await getServerSession(authOptions);

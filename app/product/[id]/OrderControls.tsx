@@ -10,7 +10,7 @@ type OrderControlsProps = {
   productId: string;
 };
 
-const sizes = ["S", "M", "L","XL","XXL"];
+const sizes = ["S", "M", "L", "XL", "XXL"];
 
 export default function OrderControls({ productId }: OrderControlsProps) {
   const router = useRouter();

@@ -44,7 +44,7 @@ type AddressRecord = {
   state?: string;
 };
 
-const availableSizes = ["S", "M", "L"];
+const availableSizes = ["S", "M", "L", "XL", "XXL"];
 
 const parsePrice = (value?: string) => {
   const price = Number((value || "").replace(/[^0-9.]/g, ""));
