@@ -164,7 +164,7 @@ export default async function OrdersPage() {
                         Payment: {order.paymentMethod || "Not available"}
                       </span>
                       {order.razorpayPaymentId ? (
-                        <span>Razorpay Payment ID: {order.razorpayPaymentId}</span>
+                        <span>Payment ID: {order.razorpayPaymentId}</span>
                       ) : null}
                       <span>
                         Amount: {order.amount || product?.price || "Not available"}

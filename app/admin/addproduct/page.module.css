@@ -37,6 +37,14 @@
 
 }
 
+.importSection {
+  margin: 18px 0 24px;
+  padding: 20px;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  background: #eff6ff;
+}
+
 .infoSection {
   margin: 28px 0;
   padding: 20px;
@@ -93,7 +101,8 @@
 }
 
 .formGroup input,
-.formGroup select {
+.formGroup select,
+.formGroup textarea {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -103,8 +112,28 @@
 }
 
 .formGroup input:focus,
-.formGroup select:focus {
+.formGroup select:focus,
+.formGroup textarea:focus {
   border-color: #0070f3;
+}
+
+.formGroup textarea {
+  min-height: 160px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.importButton {
+  width: auto;
+  margin-left: 15px;
+  padding-inline: 20px;
+}
+
+.importError {
+  margin: 8px 0 0;
+  color: #b91c1c;
+  font-size: 14px;
 }
 
 .previewBox {
@@ -183,6 +212,10 @@
 
   .buttonRow {
     flex-direction: column;
+  }
+
+  .importButton {
+    width: calc(100% - 30px);
   }
 }
 

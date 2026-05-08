@@ -2,7 +2,9 @@
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
-import { CgProfile } from "react-icons/cg";
+import { BiSolidUser } from "react-icons/bi";
+
+
 import Link from "next/link";
 
 const ProfileComponent = ({ styles }) => {
@@ -29,9 +31,9 @@ const ProfileComponent = ({ styles }) => {
 
   return (
     <div ref={wrapperRef} className={styles.profile_component}>
-      <CgProfile
+      <BiSolidUser
         onClick={() => setShowPanel((prev) => !prev)}
-        color={session ? "green" : "red"}
+        color={session ? "#282828" : "red"}
         className="icon"
       />
 

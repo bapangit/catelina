@@ -25,6 +25,25 @@ type AddProductPageProps = {
 
 type ImageIndex = 1 | 2 | 3 | 4 | 5;
 
+type ProductImportFields = Partial<{
+  title: string;
+  description: string;
+  price: string;
+  prevPrice: string;
+  category: string;
+  fabric: string;
+  pattern: string;
+  occasion: string;
+  fit: string;
+  neckline: string;
+  closure: string;
+  packSize: string;
+  dressesSubcategory: string;
+  sleeveStyle: string;
+  dressShape: string;
+  careInstructions: string;
+}>;
+
 const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -84,6 +103,8 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
   const [uploading5, setUploading5] = useState(false);
   const [deletingImage, setDeletingImage] = useState<ImageIndex | null>(null);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
+  const [jsonImportText, setJsonImportText] = useState("");
+  const [jsonImportError, setJsonImportError] = useState("");
 
   useEffect(() => {
     if (status === "loading") return;
@@ -408,6 +429,77 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
     }
   };
 
+  const parseProductImport = (value: string): ProductImportFields => {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      throw new Error("Paste product JSON first");
+    }
+
+    const parseAsJson = (text: string) => JSON.parse(text) as unknown;
+    const parsedValue = (() => {
+      try {
+        return parseAsJson(trimmedValue);
+      } catch {
+        const objectText = trimmedValue.startsWith("{")
+          ? trimmedValue
+          : `{${trimmedValue}}`;
+        const normalizedText = objectText
+          .replace(/([{,]\s*)([A-Za-z_$][\w$]*)(\s*:)/g, '$1"$2"$3')
+          .replace(/,\s*([}\]])/g, "$1");
+
+        return parseAsJson(normalizedText);
+      }
+    })();
+
+    if (!parsedValue || typeof parsedValue !== "object" || Array.isArray(parsedValue)) {
+      throw new Error("Paste a product object, not a list or plain value");
+    }
+
+    return parsedValue as ProductImportFields;
+  };
+
+  const applyProductImport = () => {
+    try {
+      const productData = parseProductImport(jsonImportText);
+
+      if (productData.title !== undefined) setTitle(String(productData.title));
+      if (productData.description !== undefined) {
+        setDescription(String(productData.description));
+      }
+      if (productData.price !== undefined) setPrice(String(productData.price));
+      if (productData.prevPrice !== undefined) {
+        setPrevPrice(String(productData.prevPrice));
+      }
+      if (productData.category !== undefined) setCategory(String(productData.category));
+      if (productData.fabric !== undefined) setFabric(String(productData.fabric));
+      if (productData.pattern !== undefined) setPattern(String(productData.pattern));
+      if (productData.occasion !== undefined) setOccasion(String(productData.occasion));
+      if (productData.fit !== undefined) setFit(String(productData.fit));
+      if (productData.neckline !== undefined) setNeckline(String(productData.neckline));
+      if (productData.closure !== undefined) setClosure(String(productData.closure));
+      if (productData.packSize !== undefined) setPackSize(String(productData.packSize));
+      if (productData.dressesSubcategory !== undefined) {
+        setDressesSubcategory(String(productData.dressesSubcategory));
+      }
+      if (productData.sleeveStyle !== undefined) {
+        setSleeveStyle(String(productData.sleeveStyle));
+      }
+      if (productData.dressShape !== undefined) {
+        setDressShape(String(productData.dressShape));
+      }
+      if (productData.careInstructions !== undefined) {
+        setCareInstructions(String(productData.careInstructions));
+      }
+
+      setJsonImportError("");
+    } catch (error) {
+      setJsonImportError(
+        error instanceof Error ? error.message : "Could not parse product JSON",
+      );
+    }
+  };
+
   const deleteImage = async (index: ImageIndex) => {
     const url = getImageUrl(index);
 
@@ -449,6 +541,32 @@ const AddProduct = ({ searchParams }: AddProductPageProps) => {
     <div className={styles.pageShell}>
       <h2>{draftId ? "Edit Product" : "Add New Product"}</h2>
       <p>Product ID: {productId}</p>
+
+      <div className={styles.importSection}>
+        <div className={styles.formGroup}>
+          <label>Paste Product JSON</label>
+          <textarea
+            placeholder='title: "Black Flared Anarkali Dress", price: "3899", category: "Salwar Suits"'
+            value={jsonImportText}
+            onChange={(e) => {
+              setJsonImportText(e.target.value);
+              setJsonImportError("");
+            }}
+            rows={8}
+          />
+          {jsonImportError && (
+            <p className={styles.importError}>{jsonImportError}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          className={`${styles.button} ${styles.importButton}`}
+          onClick={applyProductImport}
+        >
+          Fill Fields
+        </button>
+      </div>
+
       <div className={styles.formGroup}>
         <label>Product Title</label>
 

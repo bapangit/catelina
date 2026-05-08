@@ -42,6 +42,7 @@ export const patternOptions = [
   "Floral",
   "Abstract",
   "Textured",
+  "Floral Printed"
 ];
 
 export const occasionOptions = [
