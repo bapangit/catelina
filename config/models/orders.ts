@@ -17,6 +17,9 @@ const orderSchema = new Schema(
     size:String,
     amount:String,
     paymentMethod:String,
+    paymentStatus:String,
+    razorpayOrderId:String,
+    razorpayPaymentId:String,
     status:{type:String,default:"placed"} // placed, confirmed, shipped, delivered, cancelled
   },
   {

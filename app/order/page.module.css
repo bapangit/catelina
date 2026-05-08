@@ -147,6 +147,14 @@
   cursor: not-allowed;
 }
 
+.paymentError {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .changeLink,
 .primaryLink {
   border-radius: 6px;
@@ -192,6 +200,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.pricePanel .paymentPanel {
+  border: 0;
+  padding: 0 0 16px;
 }
 
 .priceLine,

@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import OrderCheckoutForm from "./OrderCheckoutForm";
 import styles from "./page.module.css";
 
 type OrderPageProps = {
@@ -44,7 +45,6 @@ type AddressRecord = {
 
 const DELIVERY_FEE = 98;
 const availableSizes = ["S", "M", "L"];
-const paymentMethods = ["Cash On Delivery", "UPI", "Cards"];
 
 const parsePrice = (value?: string) => {
   const price = Number((value || "").replace(/[^0-9.]/g, ""));
@@ -145,7 +145,7 @@ async function confirmOrder(formData: FormData) {
   }
 
   if (paymentMethod !== "Cash On Delivery") {
-    throw new Error("This payment method is not available yet.");
+    throw new Error("Use the Razorpay checkout button for online payments.");
   }
 
   const product = await Product.findById(productId);
@@ -187,6 +187,7 @@ async function confirmOrder(formData: FormData) {
     size,
     amount: formatPrice(parsePrice(product.price) + DELIVERY_FEE),
     paymentMethod,
+    paymentStatus: "pending",
   });
 
   await Product.updateOne(
@@ -240,9 +241,24 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
           <p className={styles.successMessage}>Order confirmed successfully.</p>
         ) : null}
 
-        <form action={confirmOrder} className={styles.summaryGrid}>
-          <input name="productId" type="hidden" value={productId} />
-          <input name="size" type="hidden" value={size} />
+        <OrderCheckoutForm
+          action={confirmOrder}
+          productId={productId}
+          productTitle={product.title || "Untitled Product"}
+          size={size}
+          productPrice={productPrice}
+          deliveryFee={DELIVERY_FEE}
+          totalPrice={totalPrice}
+          selectedAddress={
+            selectedAddress
+              ? {
+                  name: selectedAddress.name,
+                  ph: selectedAddress.ph,
+                }
+              : null
+          }
+          orderId={orderId}
+        >
           <div className={styles.detailsColumn}>
             <div className={styles.productPanel}>
               <div className={styles.imageWrapper}>
@@ -292,48 +308,8 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
               )}
             </section>
 
-            <section className={styles.paymentPanel}>
-              <h2>Payment Method</h2>
-              <div className={styles.paymentOptions}>
-                {paymentMethods.map((method, index) => (
-                  <label key={method} className={styles.paymentOption}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value={method}
-                      defaultChecked={index === 0}
-                      disabled={index !== 0}
-                    />
-                    <span>{method}</span>
-                  </label>
-                ))}
-              </div>
-            </section>
           </div>
-
-          <aside className={styles.pricePanel}>
-            <h2>Price Details</h2>
-            <div className={styles.priceLine}>
-              <span>Product Price</span>
-              <span>{formatPrice(productPrice)}</span>
-            </div>
-            <div className={styles.priceLine}>
-              <span>Delivery Fee</span>
-              <span>{formatPrice(DELIVERY_FEE)}</span>
-            </div>
-            <div className={styles.totalLine}>
-              <span>Total</span>
-              <span>{formatPrice(totalPrice)}</span>
-            </div>
-            <button
-              className={styles.confirmButton}
-              disabled={!selectedAddress || Boolean(orderId)}
-              type="submit"
-            >
-              {orderId ? "Order Confirmed" : "Confirm Order"}
-            </button>
-          </aside>
-        </form>
+        </OrderCheckoutForm>
       </section>
     </main>
   );
