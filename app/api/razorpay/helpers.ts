@@ -2,11 +2,11 @@ import connectDB from "@/config/DBConnect";
 import Address from "@/config/models/address";
 import Product from "@/config/models/product";
 import User from "@/config/models/user";
+import { DELIVERY_FEE } from "@/config/orderPricing";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
-export const DELIVERY_FEE = 98;
 export const availableSizes = ["S", "M", "L"];
 
 type UserDocument = {

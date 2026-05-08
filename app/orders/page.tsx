@@ -15,6 +15,7 @@ type OrderRecord = {
   size?: string;
   amount?: string;
   paymentMethod?: string;
+  razorpayPaymentId?: string;
   status?: string;
   createdAt?: Date | string;
 };
@@ -162,6 +163,9 @@ export default async function OrdersPage() {
                       <span>
                         Payment: {order.paymentMethod || "Not available"}
                       </span>
+                      {order.razorpayPaymentId ? (
+                        <span>Razorpay Payment ID: {order.razorpayPaymentId}</span>
+                      ) : null}
                       <span>
                         Amount: {order.amount || product?.price || "Not available"}
                       </span>

@@ -4,6 +4,7 @@ import Address from "@/config/models/address";
 import Order from "@/config/models/orders";
 import Product from "@/config/models/product";
 import User from "@/config/models/user";
+import { DELIVERY_FEE } from "@/config/orderPricing";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -43,7 +44,6 @@ type AddressRecord = {
   state?: string;
 };
 
-const DELIVERY_FEE = 0;
 const availableSizes = ["S", "M", "L"];
 
 const parsePrice = (value?: string) => {
