@@ -450,6 +450,28 @@
   position: relative;
 }
 
+.profile_button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.profile_header_image {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  display: block;
+  object-fit: cover;
+}
+
 .profile_panel{
   width: 240px;
   background-color: rgb(255, 255, 255);
@@ -481,6 +503,14 @@
   justify-content: center;
   font-size: 1.1rem;
   font-weight: 700;
+  overflow: hidden;
+}
+
+.profile_avatar_image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .profile_meta {
