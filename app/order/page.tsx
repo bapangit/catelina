@@ -43,7 +43,7 @@ type AddressRecord = {
   state?: string;
 };
 
-const DELIVERY_FEE = 98;
+const DELIVERY_FEE = 0;
 const availableSizes = ["S", "M", "L"];
 
 const parsePrice = (value?: string) => {
