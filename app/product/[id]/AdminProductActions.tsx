@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import DeleteProductForm from "./DeleteProductForm";
 import styles from "./page.module.css";
@@ -19,9 +20,15 @@ export default function AdminProductActions({
   productId,
   productTitle,
 }: AdminProductActionsProps) {
+  const { data: session } = useSession();
   const [pin, setPin] = useState("");
+  const isAdmin = session?.user?.role === "admin";
   const canEdit = pin === FULL_ADMIN_ACTION_PIN || pin === EDIT_ONLY_PIN;
   const canDelete = pin === FULL_ADMIN_ACTION_PIN;
+
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <div className={styles.adminActions}>

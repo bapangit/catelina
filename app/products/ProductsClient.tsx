@@ -310,6 +310,7 @@ const ProductsClient = () => {
                     height="auto"
                     aspectRatio="3 / 4"
                     borderRadius="0"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1200px) 25vw, 220px"
                   />
 
                   <div className={styles.productDetails}>

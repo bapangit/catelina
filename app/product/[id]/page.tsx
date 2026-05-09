@@ -40,6 +40,7 @@ type ProductRecord = {
   sleeveStyle?: string;
   dressShape?: string;
   careInstructions?: string;
+  published?: boolean;
 };
 
 type ProductImages = Pick<
@@ -94,6 +95,23 @@ const getDiscountPercentage = (prevPrice?: string, price?: string) => {
   return Math.round(((previous - current) / previous) * 100);
 };
 
+const getBaseUrl = () => {
+  const url =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://catelina.in";
+
+  return url.replace(/\/$/, "");
+};
+
+const truncateText = (value: string, maxLength: number) => {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return `${value.slice(0, maxLength - 3).trim()}...`;
+};
+
 async function deleteProduct(formData: FormData) {
   "use server";
 
@@ -133,18 +151,62 @@ export async function generateMetadata({
 }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
   const product = await getProductById(id);
+
+  if (!product) {
+    return {
+      title: "Product not found",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
   const productTitle = product?.title || "Product";
-  const productDescription = product?.description?.trim();
-  const shortDescription =
-    productDescription && productDescription.length > 80
-      ? `${productDescription.slice(0, 77).trim()}...`
-      : productDescription;
+  const productDescription = product.description?.trim();
+  const description =
+    productDescription ||
+    `Shop ${productTitle} at catelina.in. View price, images, and product details.`;
+  const canonicalPath = `/product/${product._id}`;
+  const imageUrls = getProductImageUrls(product);
+  const images = imageUrls.map((imageUrl) => ({
+    url: imageUrl,
+    alt: productTitle,
+  }));
+  const noIndex = product.published === false;
 
   return {
-    title: shortDescription
-      ? `${productTitle} - ${shortDescription}`
-      : productTitle,
-    description: productDescription || `Shop ${productTitle} at catelina.in`,
+    title: productTitle,
+    description: truncateText(description, 160),
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title: productTitle,
+      description: truncateText(description, 200),
+      url: canonicalPath,
+      siteName: "catelina.in",
+      images,
+      locale: "en_IN",
+      type: "website",
+    },
+    twitter: {
+      card: images.length > 0 ? "summary_large_image" : "summary",
+      title: productTitle,
+      description: truncateText(description, 200),
+      images: imageUrls,
+    },
+    robots: {
+      index: !noIndex,
+      follow: !noIndex,
+      googleBot: {
+        index: !noIndex,
+        follow: !noIndex,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
   };
 }
 
@@ -156,8 +218,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const session = await getServerSession(authOptions);
-  const isAdmin = session?.user?.role === "admin";
   const productDetails = [
     { label: "Category", value: product.category },
     { label: "Material", value: product.fabric },
@@ -178,9 +238,49 @@ export default async function ProductPage({ params }: ProductPageProps) {
     product.prevPrice,
     product.price
   );
+  const imageUrls = getProductImageUrls(product);
+  const numericPrice = parsePrice(product.price);
+  const productUrl = `${getBaseUrl()}/product/${product._id}`;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${productUrl}#product`,
+    name: product.title || "Product",
+    description: product.description || undefined,
+    image: imageUrls.length > 0 ? imageUrls : undefined,
+    sku: product._id,
+    brand: {
+      "@type": "Brand",
+      name: "catelina.in",
+    },
+    category: product.category || undefined,
+    material: product.fabric || undefined,
+    pattern: product.pattern || undefined,
+    offers:
+      numericPrice > 0
+        ? {
+            "@type": "Offer",
+            url: productUrl,
+            priceCurrency: "INR",
+            price: numericPrice,
+            availability: "https://schema.org/InStock",
+            itemCondition: "https://schema.org/NewCondition",
+            seller: {
+              "@type": "Organization",
+              name: "catelina.in",
+            },
+          }
+        : undefined,
+  };
 
   return (
     <div className={styles.container}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <div className={styles.productWrapper}>
         <div className={styles.imageWrapper}>
           <ProductImageSlider
@@ -192,18 +292,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
             alt={product.title || "Product image"}
             height="100%"
             borderRadius="12px"
+            sizes="(max-width: 900px) 100vw, 48vw"
+            preloadFirstImage
           />
         </div>
         <div className={styles.details}>
           <div className={styles.headerRow}>
             <h1 className={styles.title}>{product.title || "Untitled Product"}</h1>
-            {isAdmin ? (
-              <AdminProductActions
-                deleteAction={deleteProduct}
-                productId={product._id}
-                productTitle={product.title}
-              />
-            ) : null}
+            <AdminProductActions
+              deleteAction={deleteProduct}
+              productId={product._id}
+              productTitle={product.title}
+            />
           </div>
           <p className={styles.description}>
             {product.description || "No description available."}

@@ -16,6 +16,8 @@ type ProductImageSliderProps = {
   height?: string;
   borderRadius?: string;
   aspectRatio?: string;
+  sizes?: string;
+  preloadFirstImage?: boolean;
 };
 
 const isValidImage = (value?: string) =>
@@ -31,6 +33,8 @@ export default function ProductImageSlider({
   height = "280px",
   borderRadius = "10px",
   aspectRatio,
+  sizes = "(max-width: 768px) 360px, 540px",
+  preloadFirstImage = false,
 }: ProductImageSliderProps) {
   const images = [image1, image2, image3, image4, image5].filter(
     isValidImage
@@ -184,16 +188,21 @@ export default function ProductImageSlider({
         >
           {images.map((image, index) => (
             <div className={styles.slide} key={`${image}-${index}`}>
-              <Image
-                src={image}
-                alt={`${alt} ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 360px, 540px"
-                priority={index === 0}
-                style={{
-                  objectFit: "cover",
-                }}
-              />
+              {Math.abs(index - currentIndex) <= 1 ? (
+                <Image
+                  src={image}
+                  alt={`${alt} ${index + 1}`}
+                  fill
+                  sizes={sizes}
+                  preload={preloadFirstImage && index === 0}
+                  {...(preloadFirstImage && index === 0
+                    ? {}
+                    : { loading: "lazy" as const })}
+                  style={{
+                    objectFit: "cover",
+                  }}
+                />
+              ) : null}
             </div>
           ))}
         </div>

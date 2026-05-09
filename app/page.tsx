@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
+import AdminOrderBadge from "./components/AdminOrderBadge";
 import ProductImageSlider from "./components/ProductImageSlider";
-import { authOptions } from "./api/auth/[...nextauth]/route";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import styles from "./Page.module.css";
@@ -61,11 +60,7 @@ const getDiscountPercentage = (prevPrice?: string, price?: string) => {
 };
 
 export default async function Home() {
-  const [frequentProducts, session] = await Promise.all([
-    getProductsByOrderFrequency(),
-    getServerSession(authOptions),
-  ]);
-  const isAdmin = session?.user?.role === "admin";
+  const frequentProducts = await getProductsByOrderFrequency();
 
   return (
     <>
@@ -131,12 +126,12 @@ export default async function Home() {
                         height="auto"
                         aspectRatio="3 / 4"
                         borderRadius="0"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1200px) 25vw, 220px"
                       />
-                      {isAdmin ? (
-                        <span className={styles.frequency_badge}>
-                          {product.orderFrequency || 0} orders
-                        </span>
-                      ) : null}
+                      <AdminOrderBadge
+                        className={styles.frequency_badge}
+                        count={product.orderFrequency}
+                      />
                     </div>
                     <div className={styles.frequency_details}>
                       <p className={styles.frequency_category}>

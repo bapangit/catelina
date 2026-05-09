@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
@@ -62,8 +63,6 @@ export async function PUT(
 
     const { id } = await params;
 
-    console.log("body------------------------",body)
-
     const product = await Product.findByIdAndUpdate(
       id,
       {
@@ -73,6 +72,12 @@ export async function PUT(
         new: true,
       }
     );
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/most-ordered");
+    revalidatePath(`/product/${id}`);
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,
@@ -119,6 +124,12 @@ export async function DELETE(
 
     await Promise.all(imageUrls.map((imageUrl) => deleteFromCloudinary(imageUrl)));
     await Product.findByIdAndDelete(id);
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/most-ordered");
+    revalidatePath(`/product/${id}`);
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,

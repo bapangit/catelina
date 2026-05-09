@@ -7,6 +7,15 @@ import styles from "./Page.module.css";
 import Providers from "./providers";
 import Header from "./components/Header";
 
+const getBaseUrl = () => {
+  const url =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://catelina.in";
+
+  return url.replace(/\/$/, "");
+};
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,11 +27,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getBaseUrl()),
   title: {
     default: "catelina.in",
     template: "%s | catelina.in",
   },
   description: "Shop curated fashion products at catelina.in",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "catelina.in",
+    description: "Shop curated fashion products at catelina.in",
+    url: "/",
+    siteName: "catelina.in",
+    locale: "en_IN",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {
