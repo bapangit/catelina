@@ -40,7 +40,10 @@ export default function ProductImageSlider({
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const currentIndex = activeIndex >= images.length ? 0 : activeIndex;
+  const currentIndex =
+    images.length === 0 ? 0 : Math.min(activeIndex, images.length - 1);
+  const isFirstSlide = currentIndex === 0;
+  const isLastSlide = currentIndex === images.length - 1;
 
   if (images.length === 0) {
     return (
@@ -63,7 +66,7 @@ export default function ProductImageSlider({
   }
 
   const goToSlide = (index: number) => {
-    setActiveIndex(((index % images.length) + images.length) % images.length);
+    setActiveIndex(Math.max(0, Math.min(index, images.length - 1)));
     setDragOffset(0);
   };
 
@@ -111,6 +114,11 @@ export default function ProductImageSlider({
       return;
     }
 
+    if ((isFirstSlide && diffX > 0) || (isLastSlide && diffX < 0)) {
+      setDragOffset(0);
+      return;
+    }
+
     setDragOffset(diffX);
   };
 
@@ -139,12 +147,14 @@ export default function ProductImageSlider({
       return;
     }
 
-    if (diffX > 0) {
+    if (diffX > 0 && !isFirstSlide) {
       goToPrevious();
       return;
     }
 
-    goToNext();
+    if (diffX < 0 && !isLastSlide) {
+      goToNext();
+    }
   };
 
   return (
@@ -194,6 +204,7 @@ export default function ProductImageSlider({
               type="button"
               onClick={(event) => handleSliderControlClick(event, goToPrevious)}
               aria-label="Show previous product image"
+              disabled={isFirstSlide}
               className={`${styles.navButton} ${styles.navButtonLeft}`}
             >
               <GrNext aria-hidden="true" className={styles.navIconPrevious} />
@@ -202,6 +213,7 @@ export default function ProductImageSlider({
               type="button"
               onClick={(event) => handleSliderControlClick(event, goToNext)}
               aria-label="Show next product image"
+              disabled={isLastSlide}
               className={`${styles.navButton} ${styles.navButtonRight}`}
             >
               <GrNext aria-hidden="true" />

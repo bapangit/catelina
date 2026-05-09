@@ -46,6 +46,11 @@
   transform: translateY(-50%);
 }
 
+.navButton:disabled {
+  cursor: default;
+  opacity: 0.38;
+}
+
 .navButtonLeft {
   left: 12px;
 }

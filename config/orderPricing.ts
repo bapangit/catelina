@@ -1,1 +1,1 @@
-export const DELIVERY_FEE = 98;
+export const DELIVERY_FEE = 0;

@@ -6,11 +6,10 @@ import { deleteFromCloudinary } from "@/lib/cloudinary";
 import mongoose from "mongoose";
 import type { Metadata } from "next";
 import { revalidatePath } from "next/cache";
-import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
-import DeleteProductForm from "./DeleteProductForm";
+import AdminProductActions from "./AdminProductActions";
 import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
 
@@ -199,19 +198,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className={styles.headerRow}>
             <h1 className={styles.title}>{product.title || "Untitled Product"}</h1>
             {isAdmin ? (
-              <div className={styles.adminActions}>
-                <Link
-                  className={styles.editProductButton}
-                  href={`/admin/addproduct?id=${product._id}`}
-                >
-                  Edit Product
-                </Link>
-                <DeleteProductForm
-                  action={deleteProduct}
-                  productId={product._id}
-                  productTitle={product.title}
-                />
-              </div>
+              <AdminProductActions
+                deleteAction={deleteProduct}
+                productId={product._id}
+                productTitle={product.title}
+              />
             ) : null}
           </div>
           <p className={styles.description}>

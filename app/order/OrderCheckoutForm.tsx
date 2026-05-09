@@ -64,6 +64,8 @@ type OrderCheckoutFormProps = {
 };
 
 const formatPrice = (value: number) => `Rs. ${value.toFixed(2)}`;
+const formatDeliveryFee = (value: number) =>
+  value === 0 ? "Free Delivery" : formatPrice(value);
 
 function loadRazorpayScript() {
   return new Promise<boolean>((resolve) => {
@@ -251,7 +253,7 @@ export default function OrderCheckoutForm({
         </div>
         <div className={styles.priceLine}>
           <span>Delivery Fee</span>
-          <span>{formatPrice(deliveryFee)}</span>
+          <span>{formatDeliveryFee(deliveryFee)}</span>
         </div>
         <div className={styles.totalLine}>
           <span>Total</span>
