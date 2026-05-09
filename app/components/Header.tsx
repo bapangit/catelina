@@ -3,7 +3,7 @@
 import { signIn, useSession } from "next-auth/react";
 import { LuShoppingCart } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
-import { RiDraftLine } from "react-icons/ri";
+import { RiAdminFill, RiDraftLine } from "react-icons/ri";
 import { GiHamburgerMenu } from "react-icons/gi";
 import SearchComp from "../../components/SearchComponent";
 import ProfileComp from "../../components/ProfileComponent";
@@ -20,6 +20,7 @@ type HeaderProps = {
 export default function Header({ styles }: HeaderProps) {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const isAdmin = session?.user?.role === "admin";
 
@@ -77,24 +78,18 @@ export default function Header({ styles }: HeaderProps) {
         <div className={styles.header_secondary_nav}>
           <ul>
             {isAdmin && (
-              <>
               <li>
-                <Link href="/admin/addproduct" className={styles.addButton}>
-                  <IoMdAdd className="icon" />
-                </Link>
+                <button
+                  type="button"
+                  className={styles.admin_panel_button}
+                  onClick={() => setAdminPanelOpen(true)}
+                  aria-label="Open admin panel"
+                  aria-haspopup="dialog"
+                  aria-expanded={adminPanelOpen}
+                >
+                  <RiAdminFill className="icon" />
+                </button>
               </li>
-              <li>
-                <Link href="/admin/drafts" className={styles.draftButton}>
-                  <RiDraftLine className="icon" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/admin/orders" className={styles.draftButton}>
-                  <MdOutlineLocalShipping className="icon" />
-                </Link>
-              </li>
-              
-              </>
             )}
             
             <li>
@@ -131,6 +126,59 @@ export default function Header({ styles }: HeaderProps) {
                   <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
                 </li>
               </ol>
+            </nav>
+          </div>
+        </>
+      )}
+
+      {adminPanelOpen && (
+        <>
+          <div
+            className={styles.modal_overlay}
+            onClick={() => setAdminPanelOpen(false)}
+          />
+          <div
+            className={styles.admin_panel_modal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-panel-title"
+          >
+            <div className={styles.admin_panel_header}>
+              <h2 id="admin-panel-title">Admin Panel</h2>
+              <button
+                type="button"
+                className={styles.admin_panel_close}
+                onClick={() => setAdminPanelOpen(false)}
+                aria-label="Close admin panel"
+              >
+                x
+              </button>
+            </div>
+            <nav className={styles.admin_panel_nav}>
+              <Link
+                href="/admin/addproduct"
+                className={styles.admin_panel_link}
+                onClick={() => setAdminPanelOpen(false)}
+              >
+                <IoMdAdd className="icon" />
+                <span>Add Product</span>
+              </Link>
+              <Link
+                href="/admin/drafts"
+                className={styles.admin_panel_link}
+                onClick={() => setAdminPanelOpen(false)}
+              >
+                <RiDraftLine className="icon" />
+                <span>Drafts</span>
+              </Link>
+              <Link
+                href="/admin/orders"
+                className={styles.admin_panel_link}
+                onClick={() => setAdminPanelOpen(false)}
+              >
+                <MdOutlineLocalShipping className="icon" />
+                <span>Orders</span>
+              </Link>
             </nav>
           </div>
         </>
