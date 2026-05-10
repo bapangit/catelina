@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ProductImageSlider from "../components/ProductImageSlider";
+import { getProductPath } from "@/lib/productUrl";
 import styles from "./page.module.css";
 
 type Product = {
@@ -153,7 +154,7 @@ export default function MostOrderedClient() {
             >
               <Link
                 className={styles.productLink}
-                href={`/product/${product._id}`}
+                href={getProductPath(product)}
               >
                 <div className={styles.imageWrap}>
                   <ProductImageSlider

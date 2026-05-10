@@ -3,6 +3,7 @@ import connectDB from "@/config/DBConnect";
 import Order from "@/config/models/orders";
 import Product from "@/config/models/product";
 import User from "@/config/models/user";
+import { getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
@@ -174,7 +175,7 @@ export default async function OrdersPage() {
                     {product ? (
                       <Link
                         className={styles.productLink}
-                        href={`/product/${String(product._id)}`}
+                        href={getProductPath(product)}
                       >
                         View Product
                       </Link>

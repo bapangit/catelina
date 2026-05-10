@@ -3,6 +3,7 @@ import connectDB from "@/config/DBConnect";
 import Cart from "@/config/models/cart";
 import Product from "@/config/models/product";
 import User from "@/config/models/user";
+import { getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -187,7 +188,7 @@ export default async function CartPage() {
                       {product ? (
                         <Link
                           className={styles.secondaryLink}
-                          href={`/product/${String(product._id)}`}
+                          href={getProductPath(product)}
                         >
                           View Product
                         </Link>

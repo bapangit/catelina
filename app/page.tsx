@@ -4,6 +4,7 @@ import AdminOrderBadge from "./components/AdminOrderBadge";
 import ProductImageSlider from "./components/ProductImageSlider";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
+import { getProductPath } from "@/lib/productUrl";
 import styles from "./Page.module.css";
 
 const heroImage =
@@ -113,7 +114,7 @@ export default async function Home() {
                 <article className={styles.frequency_card} key={product._id}>
                   <Link
                     className={styles.frequency_product_link}
-                    href={`/product/${product._id}`}
+                    href={getProductPath(product)}
                   >
                     <div className={styles.frequency_image}>
                       <ProductImageSlider

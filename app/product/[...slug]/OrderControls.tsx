@@ -8,11 +8,12 @@ import styles from "./page.module.css";
 
 type OrderControlsProps = {
   productId: string;
+  productPath: string;
 };
 
 const sizes = ["S", "M", "L", "XL", "XXL"];
 
-export default function OrderControls({ productId }: OrderControlsProps) {
+export default function OrderControls({ productId, productPath }: OrderControlsProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [selectedSize, setSelectedSize] = useState("");
@@ -53,7 +54,7 @@ export default function OrderControls({ productId }: OrderControlsProps) {
 
     if (!session) {
       signIn("google", {
-        callbackUrl: `/product/${productId}`,
+        callbackUrl: productPath,
       });
       return;
     }

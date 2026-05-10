@@ -1,9 +1,11 @@
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
+import { getProductPath } from "@/lib/productUrl";
 import type { MetadataRoute } from "next";
 
 type ProductSitemapRecord = {
   _id: string | { toString(): string };
+  title?: string;
   updatedAt?: Date | string;
 };
 
@@ -55,14 +57,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connectDB();
 
   const products = await Product.find({ published: true })
-    .select("_id updatedAt")
+    .select("_id title updatedAt")
     .sort({ updatedAt: -1 })
     .lean<ProductSitemapRecord[]>();
 
   return [
     ...routes,
     ...products.map((product) => ({
-      url: `${baseUrl}/product/${String(product._id)}`,
+      url: `${baseUrl}${getProductPath(product)}`,
       lastModified: product.updatedAt || now,
       changeFrequency: "weekly" as const,
       priority: 0.8,

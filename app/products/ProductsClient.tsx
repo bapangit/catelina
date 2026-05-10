@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { IoCloseOutline, IoFilterOutline } from "react-icons/io5";
 import ProductImageSlider from "../components/ProductImageSlider";
 import { dressCategories } from "@/config/productInfoOpt";
+import { getProductPath } from "@/lib/productUrl";
 import styles from "./page.module.css";
 
 interface Product {
@@ -299,7 +300,7 @@ const ProductsClient = () => {
                 ref={isLastItem ? lastProductRef : null}
                 className={styles.productCard}
               >
-                <Link href={`/product/${product._id}`} className={styles.productLink}>
+                <Link href={getProductPath(product)} className={styles.productLink}>
                   <ProductImageSlider
                     image1={product.image1}
                     image2={product.image2}

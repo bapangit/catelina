@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
+import { getProductPath } from "@/lib/productUrl";
 
 const SearchComponent = ({ styles }) => {
   const router = useRouter();
@@ -136,7 +137,7 @@ const SearchComponent = ({ styles }) => {
               suggestions.map((product) => (
                 <Link
                   key={product._id}
-                  href={`/product/${product._id}`}
+                  href={getProductPath(product)}
                   className={styles.search_suggestion}
                   onClick={closeSearchPanel}
                 >

@@ -3,6 +3,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
 import type { Metadata } from "next";
 import { revalidatePath } from "next/cache";
@@ -14,7 +15,7 @@ import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
 
 type ProductPageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string[] }>;
 };
 
 type ProductRecord = {
@@ -45,8 +46,10 @@ type ProductRecord = {
 
 type ProductImages = Pick<
   ProductRecord,
-  "image1" | "image2" | "image3" | "image4" | "image5"
+  "title" | "image1" | "image2" | "image3" | "image4" | "image5"
 >;
+
+const getProductIdFromSlug = (slug: string[]) => slug[slug.length - 1] || "";
 
 const getProductById = cache(async (id: string): Promise<ProductRecord | null> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -143,13 +146,15 @@ async function deleteProduct(formData: FormData) {
   revalidatePath("/products");
   revalidatePath("/most-ordered");
   revalidatePath(`/product/${productId}`);
+  revalidatePath(getProductPath({ _id: productId, title: product.title }));
   redirect("/products");
 }
 
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
+  const id = getProductIdFromSlug(slug);
   const product = await getProductById(id);
 
   if (!product) {
@@ -167,7 +172,7 @@ export async function generateMetadata({
   const description =
     productDescription ||
     `Shop ${productTitle} at catelina.in. View price, images, and product details.`;
-  const canonicalPath = `/product/${product._id}`;
+  const canonicalPath = getProductPath(product);
   const imageUrls = getProductImageUrls(product);
   const images = imageUrls.map((imageUrl) => ({
     url: imageUrl,
@@ -211,11 +216,18 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { id } = await params;
+  const { slug } = await params;
+  const id = getProductIdFromSlug(slug);
   const product = await getProductById(id);
 
   if (!product) {
     notFound();
+  }
+
+  const canonicalPath = getProductPath(product);
+
+  if (`/product/${slug.join("/")}` !== canonicalPath) {
+    redirect(canonicalPath);
   }
 
   const productDetails = [
@@ -240,7 +252,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
   const imageUrls = getProductImageUrls(product);
   const numericPrice = parsePrice(product.price);
-  const productUrl = `${getBaseUrl()}/product/${product._id}`;
+  const productUrl = `${getBaseUrl()}${canonicalPath}`;
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -322,7 +334,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
             <span className={styles.taxText}>MRP inclusive of all taxes</span>
           </div>
-          <OrderControls productId={product._id} />
+          <OrderControls productId={product._id} productPath={canonicalPath} />
           {hasProductInfo ? (
             <section className={styles.infoSection}>
               <h2 className={styles.infoHeading}>Product Information</h2>

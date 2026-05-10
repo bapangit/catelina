@@ -3,8 +3,11 @@ import { revalidatePath } from "next/cache";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { getProductPath } from "@/lib/productUrl";
 
 type ProductImages = {
+  _id: string | { toString(): string };
+  title?: string;
   image1?: string;
   image2?: string;
   image3?: string;
@@ -77,6 +80,9 @@ export async function PUT(
     revalidatePath("/products");
     revalidatePath("/most-ordered");
     revalidatePath(`/product/${id}`);
+    if (product) {
+      revalidatePath(getProductPath(product));
+    }
     revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
@@ -129,6 +135,7 @@ export async function DELETE(
     revalidatePath("/products");
     revalidatePath("/most-ordered");
     revalidatePath(`/product/${id}`);
+    revalidatePath(getProductPath(product));
     revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
