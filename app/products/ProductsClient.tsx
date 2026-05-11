@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { IoCloseOutline, IoFilterOutline } from "react-icons/io5";
+import { MdModeEditOutline } from "react-icons/md";
 import ProductImageSlider from "../components/ProductImageSlider";
 import { dressCategories } from "@/config/productInfoOpt";
 import { getProductPath } from "@/lib/productUrl";
@@ -43,6 +45,7 @@ const getDiscountPercentage = (prevPrice: string, price: string) => {
 };
 
 const ProductsClient = () => {
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const urlSearchText = searchParams.get("search") || "";
   const urlCategory = searchParams.get("category") || "";
@@ -59,6 +62,7 @@ const ProductsClient = () => {
   const [isFilterButtonHidden, setIsFilterButtonHidden] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
   const lastScrollY = useRef(0);
+  const isAdmin = session?.user?.role === "admin";
 
   const loadProducts = useCallback(async (
     pageNumber: number,
@@ -293,6 +297,7 @@ const ProductsClient = () => {
               product.prevPrice,
               product.price
             );
+            const productPath = getProductPath(product);
 
             return (
               <div
@@ -300,20 +305,38 @@ const ProductsClient = () => {
                 ref={isLastItem ? lastProductRef : null}
                 className={styles.productCard}
               >
-                <Link href={getProductPath(product)} className={styles.productLink}>
-                  <ProductImageSlider
-                    image1={product.image1}
-                    image2={product.image2}
-                    image3={product.image3}
-                    image4={product.image4}
-                    image5={product.image5}
-                    alt={product.title || "Product image"}
-                    height="auto"
-                    aspectRatio="3 / 4"
-                    borderRadius="0"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1200px) 25vw, 220px"
-                  />
+                <div className={styles.imageWrap}>
+                  <Link
+                    href={productPath}
+                    className={styles.imageLink}
+                    aria-label={`View ${product.title || "product"}`}
+                  >
+                    <ProductImageSlider
+                      image1={product.image1}
+                      image2={product.image2}
+                      image3={product.image3}
+                      image4={product.image4}
+                      image5={product.image5}
+                      alt={product.title || "Product image"}
+                      height="auto"
+                      aspectRatio="3 / 4"
+                      borderRadius="0"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1200px) 25vw, 220px"
+                    />
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      href={`/admin/addproduct?id=${product._id}`}
+                      className={styles.editImageButton}
+                      aria-label={`Edit ${product.title || "product"}`}
+                      title="Edit product"
+                    >
+                      <MdModeEditOutline aria-hidden="true" />
+                    </Link>
+                  )}
+                </div>
 
+                <Link href={productPath} className={styles.productLink}>
                   <div className={styles.productDetails}>
                     <h3 className={styles.productBrand}>
                       {product.title || "Product"}
