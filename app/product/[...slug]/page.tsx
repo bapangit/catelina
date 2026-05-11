@@ -2,6 +2,7 @@ import ProductImageSlider from "@/app/components/ProductImageSlider";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import { createProductSlug, getProductPath } from "@/lib/productUrl";
+import { getBaseUrl } from "@/lib/siteUrl";
 import mongoose from "mongoose";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -95,15 +96,6 @@ const getDiscountPercentage = (prevPrice?: string, price?: string) => {
   }
 
   return Math.round(((previous - current) / previous) * 100);
-};
-
-const getBaseUrl = () => {
-  const url =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    "https://catelina.in";
-
-  return url.replace(/\/$/, "");
 };
 
 const truncateText = (value: string, maxLength: number) => {

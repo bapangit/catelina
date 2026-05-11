@@ -3,18 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
+import { getBaseUrl } from "@/lib/siteUrl";
 import styles from "./Page.module.css";
 import Providers from "./providers";
 import Header from "./components/Header";
-
-const getBaseUrl = () => {
-  const url =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    "https://catelina.in";
-
-  return url.replace(/\/$/, "");
-};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

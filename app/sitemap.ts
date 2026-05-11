@@ -1,22 +1,30 @@
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
 import { getProductPath } from "@/lib/productUrl";
+import { getBaseUrl } from "@/lib/siteUrl";
 import type { MetadataRoute } from "next";
 
 type ProductSitemapRecord = {
   _id: string | { toString(): string };
   title?: string;
   updatedAt?: Date | string;
+  image1?: string;
+  image2?: string;
+  image3?: string;
+  image4?: string;
+  image5?: string;
 };
 
-const getBaseUrl = () => {
-  const url =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    "https://catelina.in";
-
-  return url.replace(/\/$/, "");
-};
+const getProductImageUrls = (product: ProductSitemapRecord) =>
+  [
+    product.image1,
+    product.image2,
+    product.image3,
+    product.image4,
+    product.image5,
+  ].filter((imageUrl): imageUrl is string =>
+    Boolean(imageUrl && imageUrl.trim() && imageUrl.startsWith("http"))
+  );
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
@@ -57,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connectDB();
 
   const products = await Product.find({ published: true })
-    .select("_id title updatedAt")
+    .select("_id title updatedAt image1 image2 image3 image4 image5")
     .sort({ updatedAt: -1 })
     .lean<ProductSitemapRecord[]>();
 
@@ -68,6 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: product.updatedAt || now,
       changeFrequency: "weekly" as const,
       priority: 0.8,
+      images: getProductImageUrls(product),
     })),
   ];
 }
