@@ -1,6 +1,25 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { dressCategories } from "@/config/productInfoOpt";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Categories",
+  description:
+    "Shop Catelina fashion by category, from sarees and kurtis to festive sets and flowing dresses.",
+  alternates: {
+    canonical: "/categories",
+  },
+  openGraph: {
+    title: "Categories | catelina.in",
+    description:
+      "Shop Catelina fashion by category, from sarees and kurtis to festive sets and flowing dresses.",
+    url: "/categories",
+    siteName: "catelina.in",
+    locale: "en_IN",
+    type: "website",
+  },
+};
 
 export default function CategoriesPage() {
   return (

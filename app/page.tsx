@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import AdminOrderBadge from "./components/AdminOrderBadge";
 import ProductImageSlider from "./components/ProductImageSlider";
 import connectDB from "@/config/DBConnect";
@@ -9,6 +10,12 @@ import styles from "./Page.module.css";
 
 const heroImage =
   "https://img.magnific.com/premium-photo/portrait-gorgeous-woman-wearing-beautiful-maxi-dress-posing-against-wall-with-wild-grape_144962-18080.jpg?w=1060";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 type FrequencyProduct = {
   _id: string;

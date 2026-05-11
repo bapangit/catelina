@@ -33,9 +33,6 @@ export const metadata: Metadata = {
     template: "%s | catelina.in",
   },
   description: "Shop curated fashion products at catelina.in",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "catelina.in",
     description: "Shop curated fashion products at catelina.in",

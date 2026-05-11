@@ -5,10 +5,19 @@ import Product from "@/config/models/product";
 import User from "@/config/models/user";
 import { getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Orders",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type OrderRecord = {
   _id: mongoose.Types.ObjectId | string;

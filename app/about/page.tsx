@@ -7,6 +7,18 @@ export const metadata: Metadata = {
   title: "About Us",
   description:
     "Learn about Catelina's curated fashion collection and shopping experience.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Us | catelina.in",
+    description:
+      "Learn about Catelina's curated fashion collection and shopping experience.",
+    url: "/about",
+    siteName: "catelina.in",
+    locale: "en_IN",
+    type: "website",
+  },
 };
 
 const values = [

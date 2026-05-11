@@ -6,6 +6,7 @@ import Product from "@/config/models/product";
 import User from "@/config/models/user";
 import { DELIVERY_FEE } from "@/config/orderPricing";
 import mongoose from "mongoose";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
@@ -13,6 +14,14 @@ import { notFound, redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import OrderCheckoutForm from "./OrderCheckoutForm";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Checkout",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type OrderPageProps = {
   searchParams: Promise<{

@@ -4,7 +4,7 @@ import Product from "@/config/models/product";
 import { createProductSlug, getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { cache } from "react";
 import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
@@ -203,7 +203,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const canonicalPath = getProductPath(product);
 
   if (`/product/${slug.join("/")}` !== canonicalPath) {
-    redirect(canonicalPath);
+    permanentRedirect(canonicalPath);
   }
 
   const productDetails = [

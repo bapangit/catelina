@@ -1,6 +1,7 @@
 import dbConnect from "@/config/DBConnect";
 import Address from "@/config/models/address";
 import User from "@/config/models/user";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -8,6 +9,14 @@ import { authOptions } from "../api/auth/[...nextauth]/route";
 import SelectAddressButton from "./SelectAddressButton";
 import styles from "./page.module.css";
 import mongoose from "mongoose";
+
+export const metadata: Metadata = {
+  title: "Addresses",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type AddressPageProps = {
   searchParams: Promise<{

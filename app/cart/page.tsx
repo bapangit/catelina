@@ -5,12 +5,21 @@ import Product from "@/config/models/product";
 import User from "@/config/models/user";
 import { getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { AiOutlineDelete } from "react-icons/ai";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Cart",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type CartRecord = {
   _id: mongoose.Types.ObjectId | string;
