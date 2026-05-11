@@ -34,44 +34,6 @@
   gap: 1rem;
 }
 
-.adminActions {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.adminActionGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #ffffff;
-}
-
-.adminPinField {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: #4b5563;
-  font-size: 0.72rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.adminPinField input {
-  width: 3.9rem;
-  min-height: 1.85rem;
-  border: 1px solid #d1d5db;
-  border-radius: 5px;
-  color: #111827;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.28rem 0.42rem;
-}
-
 .title {
   font-size: clamp(2rem, 2.4vw, 2.6rem);
   font-weight: 700;
@@ -118,59 +80,6 @@
   color: #16a34a;
   font-size: 1rem;
   font-weight: 800;
-}
-
-.deleteProductButton {
-  border: 1px solid #dc2626;
-  border-radius: 5px;
-  background: #dc2626;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 0.72rem;
-  font-weight: 800;
-  min-height: 1.85rem;
-  padding: 0.3rem 0.48rem;
-  white-space: nowrap;
-}
-
-.editProductButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #111827;
-  border-radius: 5px;
-  background: #ffffff;
-  color: #111827;
-  cursor: pointer;
-  font-size: 0.72rem;
-  font-weight: 800;
-  min-height: 1.85rem;
-  padding: 0.3rem 0.48rem;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.editProductButton:hover {
-  background: #f9fafb;
-}
-
-.disabledAdminButton,
-.disabledAdminButton:hover {
-  border-color: #d1d5db;
-  background: #d1d5db;
-  color: #4b5563;
-  cursor: not-allowed;
-  opacity: 0.65;
-}
-
-.deleteProductButton:hover:not(:disabled) {
-  background: #b91c1c;
-  border-color: #b91c1c;
-}
-
-.deleteProductButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
 }
 
 .taxText {

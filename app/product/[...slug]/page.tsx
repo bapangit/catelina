@@ -1,16 +1,11 @@
 import ProductImageSlider from "@/app/components/ProductImageSlider";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectDB from "@/config/DBConnect";
 import Product from "@/config/models/product";
-import { deleteFromCloudinary } from "@/lib/cloudinary";
-import { getProductPath } from "@/lib/productUrl";
+import { createProductSlug, getProductPath } from "@/lib/productUrl";
 import mongoose from "mongoose";
 import type { Metadata } from "next";
-import { revalidatePath } from "next/cache";
-import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
-import AdminProductActions from "./AdminProductActions";
 import OrderControls from "./OrderControls";
 import styles from "./page.module.css";
 
@@ -48,6 +43,10 @@ type ProductImages = Pick<
   ProductRecord,
   "title" | "image1" | "image2" | "image3" | "image4" | "image5"
 >;
+
+type ProductStaticParamRecord = Pick<ProductRecord, "title"> & {
+  _id: { toString(): string };
+};
 
 const getProductIdFromSlug = (slug: string[]) => slug[slug.length - 1] || "";
 
@@ -115,39 +114,16 @@ const truncateText = (value: string, maxLength: number) => {
   return `${value.slice(0, maxLength - 3).trim()}...`;
 };
 
-async function deleteProduct(formData: FormData) {
-  "use server";
-
-  const session = await getServerSession(authOptions);
-  const productId = formData.get("productId");
-
-  if (!session?.user || session.user.role !== "admin") {
-    throw new Error("Only admins can delete products.");
-  }
-
-  if (typeof productId !== "string" || !mongoose.Types.ObjectId.isValid(productId)) {
-    throw new Error("Invalid product.");
-  }
-
+export async function generateStaticParams() {
   await connectDB();
 
-  const product = await Product.findById(productId).lean<ProductImages | null>();
+  const products = await Product.find({ published: true })
+    .select("_id title")
+    .lean<ProductStaticParamRecord[]>();
 
-  if (!product) {
-    notFound();
-  }
-
-  const imageUrls = getProductImageUrls(product);
-
-  await Promise.all(imageUrls.map((imageUrl) => deleteFromCloudinary(imageUrl)));
-  await Product.findByIdAndDelete(productId);
-
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/most-ordered");
-  revalidatePath(`/product/${productId}`);
-  revalidatePath(getProductPath({ _id: productId, title: product.title }));
-  redirect("/products");
+  return products.map((product) => ({
+    slug: [createProductSlug(product.title), product._id.toString()],
+  }));
 }
 
 export async function generateMetadata({
@@ -311,11 +287,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className={styles.details}>
           <div className={styles.headerRow}>
             <h1 className={styles.title}>{product.title || "Untitled Product"}</h1>
-            <AdminProductActions
-              deleteAction={deleteProduct}
-              productId={product._id}
-              productTitle={product.title}
-            />
           </div>
           <p className={styles.description}>
             {product.description || "No description available."}
