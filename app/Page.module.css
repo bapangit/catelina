@@ -45,8 +45,8 @@
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  width: min(220px, calc(50vw - 100px));
-  height: 44px;
+  width: min(250px, calc(50vw - 100px));
+  height: 50px;
   text-decoration: none;
 }
 
@@ -951,8 +951,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: min(150px, calc(100vw - 210px));
-    height: 42px;
+    width: min(170px, calc(100vw - 210px));
+    height: 46px;
   }
 
   .logo_image {
@@ -1046,8 +1046,8 @@
   }
 
   .logo_link {
-    width: min(118px, calc(100vw - 190px));
-    height: 38px;
+    width: min(135px, calc(100vw - 190px));
+    height: 42px;
   }
 
   .header_secondary_nav ul {
