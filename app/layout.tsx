@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import Script from "next/script";
 import "./globals.css";
 
 import { getBaseUrl } from "@/lib/siteUrl";
@@ -62,6 +63,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <Script
+          src="https://shown.io/metrics/ZB0A5PMq0n"
+          type="text/javascript"
+          defer
+        />
         <Providers>
           <main className={styles.main}>
             <Header styles={styles} />
