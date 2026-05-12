@@ -271,7 +271,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             image5={product.image5}
             alt={product.title || "Product image"}
             height="100%"
-            borderRadius="12px"
+            borderRadius="0"
             sizes="(max-width: 900px) 100vw, 48vw"
             preloadFirstImage
           />

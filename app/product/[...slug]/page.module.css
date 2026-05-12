@@ -16,7 +16,7 @@
   max-width: 100%;
   aspect-ratio: 3 / 4;
   justify-self: center;
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
@@ -244,12 +244,22 @@
 }
 
 @media (max-width: 900px) {
+  .container {
+    padding-inline: 0;
+  }
+
   .productWrapper {
     grid-template-columns: 1fr;
   }
 
   .imageWrapper {
-    width: min(100%, 360px);
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .details {
+    padding-inline: 2rem;
   }
 
   .headerRow {
@@ -263,6 +273,10 @@
 }
 
 @media (max-width: 480px) {
+  .details {
+    padding-inline: 1rem;
+  }
+
   .actionButtons {
     grid-template-columns: 1fr;
   }
