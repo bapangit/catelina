@@ -63,11 +63,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Script
-          src="https://shown.io/metrics/ZB0A5PMq0n"
-          type="text/javascript"
-          defer
-        />
         <Providers>
           <main className={styles.main}>
             <Header styles={styles} />
