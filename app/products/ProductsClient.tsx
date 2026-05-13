@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { IoCloseOutline, IoFilterOutline } from "react-icons/io5";
 import { MdModeEditOutline } from "react-icons/md";
 import ProductImageSlider from "../components/ProductImageSlider";
@@ -27,6 +26,13 @@ interface Product {
 
 const PAGE_SIZE = 8;
 
+type ProductsClientProps = {
+  initialProducts: Product[];
+  initialHasMore: boolean;
+  initialCategory: string;
+  initialSearchText: string;
+};
+
 const parsePrice = (value: string) => {
   const price = Number(value.replace(/[^0-9.]/g, ""));
 
@@ -44,24 +50,27 @@ const getDiscountPercentage = (prevPrice: string, price: string) => {
   return Math.round(((previous - current) / previous) * 100);
 };
 
-const ProductsClient = () => {
+const ProductsClient = ({
+  initialProducts,
+  initialHasMore,
+  initialCategory,
+  initialSearchText,
+}: ProductsClientProps) => {
   const { data: session } = useSession();
-  const searchParams = useSearchParams();
-  const urlSearchText = searchParams.get("search") || "";
-  const urlCategory = searchParams.get("category") || "";
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(initialHasMore);
   const [error, setError] = useState("");
-  const [category, setCategory] = useState(urlCategory);
-  const [searchText, setSearchText] = useState(urlSearchText);
-  const [debouncedSearchText, setDebouncedSearchText] = useState(urlSearchText);
+  const [category, setCategory] = useState(initialCategory);
+  const [searchText, setSearchText] = useState(initialSearchText);
+  const [debouncedSearchText, setDebouncedSearchText] = useState(initialSearchText);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isFilterButtonHidden, setIsFilterButtonHidden] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
   const lastScrollY = useRef(0);
+  const initialLoadHandled = useRef(false);
   const isAdmin = session?.user?.role === "admin";
 
   const loadProducts = useCallback(async (
@@ -112,14 +121,6 @@ const ProductsClient = () => {
   }, []);
 
   useEffect(() => {
-    setSearchText(urlSearchText);
-  }, [urlSearchText]);
-
-  useEffect(() => {
-    setCategory(urlCategory);
-  }, [urlCategory]);
-
-  useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setDebouncedSearchText(searchText);
     }, 350);
@@ -130,9 +131,17 @@ const ProductsClient = () => {
   }, [searchText]);
 
   useEffect(() => {
+    if (!initialLoadHandled.current) {
+      initialLoadHandled.current = true;
+      setProducts(initialProducts);
+      setHasMore(initialHasMore);
+      setLoading(false);
+      return;
+    }
+
     setPage(1);
     loadProducts(1, category, debouncedSearchText);
-  }, [category, debouncedSearchText, loadProducts]);
+  }, [category, debouncedSearchText, initialHasMore, initialProducts, loadProducts]);
 
   const lastProductRef = useCallback(
     (node: HTMLDivElement | null) => {

@@ -15,6 +15,8 @@ type ProductSitemapRecord = {
   image5?: string;
 };
 
+export const revalidate = 3600;
+
 const getProductImageUrls = (product: ProductSitemapRecord) =>
   [
     product.image1,
