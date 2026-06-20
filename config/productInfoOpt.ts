@@ -143,6 +143,11 @@ export const dressCategories = [
     description: "Timeless drapes with rich textures for weddings, festivals, and elegant everyday dressing.",
   },
   {
+    name: "Blouse",
+    image: "/category/blouse.jpg",
+    description: "Timeless drapes with rich textures for weddings, festivals, and elegant everyday dressing.",
+  },
+  {
     name: "Kurtis",
     image: "/category/kurti.jpg",
     description: "Comfortable, polished staples made for workdays, casual outings, and repeat wear.",
