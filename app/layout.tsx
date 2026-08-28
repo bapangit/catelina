@@ -80,6 +80,26 @@ export default function RootLayout({
           `}
         </Script>
 
+        {/* Google Ads Conversion Tracking */}
+        <Script id="google-ads-conversion" strategy="afterInteractive">
+          {`
+            function gtag_report_conversion(url) {
+              var callback = function () {
+                if (typeof(url) != 'undefined') {
+                  window.location = url;
+                }
+              };
+
+              gtag('event', 'conversion', {
+                'send_to': 'AW-578050842/IJFOCP7T0M0YEJq20ZMC',
+                'event_callback': callback
+              });
+
+              return false;
+            }
+          `}
+        </Script>
+
         <Providers>
           <main className={styles.main}>
             <Header styles={styles} />
@@ -108,16 +128,22 @@ export default function RootLayout({
                 >
                   <div>
                     <h2>Shop</h2>
+
                     <ul>
                       <li>
                         <Link href="/products">Products</Link>
                       </li>
+
                       <li>
                         <Link href="/categories">Categories</Link>
                       </li>
+
                       <li>
-                        <Link href="/most-ordered">Most Ordered</Link>
+                        <Link href="/most-ordered">
+                          Most Ordered
+                        </Link>
                       </li>
+
                       <li>
                         <Link href="/about">About Us</Link>
                       </li>
@@ -126,13 +152,16 @@ export default function RootLayout({
 
                   <div>
                     <h2>Account</h2>
+
                     <ul>
                       <li>
                         <Link href="/profile">Profile</Link>
                       </li>
+
                       <li>
                         <Link href="/orders">Orders</Link>
                       </li>
+
                       <li>
                         <Link href="/address">Addresses</Link>
                       </li>
@@ -141,17 +170,22 @@ export default function RootLayout({
 
                   <div>
                     <h2>Support</h2>
+
                     <ul>
                       <li>
                         <a href="mailto:support@catelina.in">
                           support@catelina.in
                         </a>
                       </li>
+
                       <li>
                         <span>Mon-Sat, 10 AM-7 PM</span>
                       </li>
+
                       <li>
-                        <span>Free shipping on select orders</span>
+                        <span>
+                          Free shipping on select orders
+                        </span>
                       </li>
                     </ul>
                   </div>
@@ -159,7 +193,9 @@ export default function RootLayout({
               </div>
 
               <div className={styles.footer_bottom}>
-                <p>(c) 2026 catelina.in. All rights reserved.</p>
+                <p>
+                  (c) 2026 catelina.in. All rights reserved.
+                </p>
               </div>
             </footer>
           </main>
@@ -168,3 +204,4 @@ export default function RootLayout({
     </html>
   );
 }
+
