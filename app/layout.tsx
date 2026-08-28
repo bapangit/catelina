@@ -63,23 +63,49 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-F8X84Y931X"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-F8X84Y931X');
+          `}
+        </Script>
+
         <Providers>
           <main className={styles.main}>
             <Header styles={styles} />
+
             {children}
+
             <footer className={styles.footer}>
               <div className={styles.footer_inner}>
-                <section className={styles.footer_brand} aria-label="Store information">
+                <section
+                  className={styles.footer_brand}
+                  aria-label="Store information"
+                >
                   <Link href="/" className={styles.footer_logo}>
                     Ecom App
                   </Link>
+
                   <p>
                     Curated everyday fashion, thoughtful picks, and quick
                     checkout for your next favorite find.
                   </p>
                 </section>
 
-                <nav className={styles.footer_nav} aria-label="Footer navigation">
+                <nav
+                  className={styles.footer_nav}
+                  aria-label="Footer navigation"
+                >
                   <div>
                     <h2>Shop</h2>
                     <ul>
@@ -117,7 +143,9 @@ export default function RootLayout({
                     <h2>Support</h2>
                     <ul>
                       <li>
-                        <a href="mailto:support@catelina.in">support@catelina.in</a>
+                        <a href="mailto:support@catelina.in">
+                          support@catelina.in
+                        </a>
                       </li>
                       <li>
                         <span>Mon-Sat, 10 AM-7 PM</span>
